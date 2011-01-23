@@ -66,6 +66,12 @@ package
                 new Triangle(points[25], points[24], points[16], 0xfcb653),
                 new Triangle(points[25], points[16], points[18], 0xfcb653),
 
+                new Triangle(points[13], points[25], points[18], 0xfcb653),
+                new Triangle(points[13], points[18], points[15], 0xfcb653),
+
+                new Triangle(points[18], points[16], points[20], 0xfcb653),
+                new Triangle(points[18], points[20], points[22], 0xfcb653),
+
             ];
 
             init(triangles);
