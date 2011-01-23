@@ -35,6 +35,21 @@ package
                 new Point3D( 100, -200,   0),
                 new Point3D( 100,  200,   0),
 
+            // 16
+                new Point3D( 100, -100,   0),
+                new Point3D( 100, -100, -20),
+                new Point3D( 100,  100,   0),
+                new Point3D( 100,  100, -20),
+
+            // 20
+                new Point3D( 200, -100,   0),
+                new Point3D( 200, -100, -20),
+                new Point3D( 200,  100,   0),
+                new Point3D( 200,  100, -20),
+
+            // 24
+                new Point3D(-100, -100,   0),
+                new Point3D(-100,  100,   0),
             ];
 
             for(var i:uint = 0; i < points.length; i++)
