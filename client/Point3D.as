@@ -79,5 +79,14 @@ package
             x = x1;
             y = y1;
         }
+
+        public function scale(scaleFactor:Number):void
+        {
+            x *= scaleFactor;
+            y *= scaleFactor;
+            z *= scaleFactor;
+
+        }
+
     }
 }

@@ -1,18 +1,20 @@
 package
 {
-    import flash.display.Sprite;
-    import flash.events.Event;
+    import flash.display.Graphics;
 
-    public class Tile extends Sprite
+    public class Tile
     {
         public var points:Array;
         private var triangles:Array;
         private var fl:Number = 250;
-        private var vpX:Number = stage.stageWidth / 2;
-        private var vpY:Number = stage.stageHeight / 2;
+        private var vpX:Number;
+        private var vpY:Number;
 
-        public function Tile()
+        public function Tile(x:Number, y:Number, vpX:Number, vpY:Number)
         {
+            this.vpX = vpX;
+            this.vpY = vpY;
+
             points = [
                 new Point3D(-200, -200,   0),
                 new Point3D( 200, -200,   0),
@@ -60,9 +62,13 @@ package
 
             for(var i:uint = 0; i < points.length; i++)
             {
-                points[i].setVanishingPoint(vpX, vpY);
-                points[i].setCenter(0, 0, 200);
+                var point:Point3D = points[i];
+                point.setVanishingPoint(vpX, vpY);
+                point.setCenter(0, 0, 200);
+                point.x += x;
+                point.y += y;
             }
+            
         }
 
         public function init(triangles:Array):void
@@ -74,29 +80,70 @@ package
             for(i = 0; i < triangles.length; i++)
                 triangles[i].light = light;
 
-            addEventListener(Event.ENTER_FRAME, onEnterFrame);
         }
 
-        private function onEnterFrame(event:Event):void
+        public function scale(scaleFactor:Number):void
         {
-            var angleX:Number = (mouseY - vpY) * 0.001;
-            var angleY:Number = (mouseX - vpX) * 0.001;
-
-            var i:uint;
-
-            for(i = 0; i < points.length; i++)
+            for(var i:uint = 0; i < points.length; i++)
             {
-                var point:Point3D = points[i];
-                point.rotateX(angleX);
-                point.rotateY(angleY);
+                points[i].scale(scaleFactor);
+            }
+        }
+
+        public function translate(x:Number, y:Number):void
+        {
+            for(var i:uint = 0; i < points.length; i++)
+            {
+                points[i].x += x;
+                points[i].y += y;
+            }
+        }
+
+        public function get width():Number
+        {
+            var start:Number = 0;
+            var end:Number = 0;
+
+            for(var i:uint = 0; i < points.length; i++)
+            {
+                start = Math.min(start, points[i].x);
+                end = Math.max(end, points[i].x);
             }
 
-            triangles.sortOn("depth", Array.DESCENDING | Array.NUMERIC);
+            return end - start;
+        }
 
-            graphics.clear();
+        public function get height():Number
+        {
+            var start:Number = 0;
+            var end:Number = 0;
+
+            // find first and last point
+            for(var i:uint = 0; i < points.length; i++)
+            {
+                start = Math.min(start, points[i].y);
+                end = Math.max(end, points[i].y);
+            }
+
+            return end - start;
+        }
+
+        public function rotate(angleZ:Number):void
+        {
+            // convert to radians
+            angleZ = angleZ / 180 * Math.PI;
+
+            for(var i:uint = 0; i < points.length; i++)
+            {
+                var point:Point3D = points[i];
+                point.rotateZ(angleZ);
+            }
+        }
+
+        public function draw(g:Graphics):void
+        {
             for(var i:uint = 0; i < triangles.length; i++)
-                triangles[i].draw(graphics);
-
+                triangles[i].draw(g);
         }
     }
 }
