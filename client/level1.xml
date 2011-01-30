@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<level rows="3" columns="3">
+    <tile>
+        <type>tile_l</type>
+        <rotation>0</rotation>
+    </tile>
+    <tile>
+        <type>tile_t</type>
+        <rotation>0</rotation>
+    </tile>
+    <tile>
+        <type>tile_l</type>
+        <rotation>90</rotation>
+    </tile>
+    <tile>
+        <type>tile_l</type>
+        <rotation>0</rotation>
+    </tile>
+    <tile>
+        <type>tile_t</type>
+        <rotation>0</rotation>
+    </tile>
+    <tile>
+        <type>tile_t</type>
+        <rotation>0</rotation>
+    </tile>
+    <tile>
+        <type>tile_l</type>
+        <rotation>270</rotation>
+    </tile>
+    <tile>
+        <type>tile_t</type>
+        <rotation>0</rotation>
+    </tile>
+    <tile>
+        <type>tile_l</type>
+        <rotation>180</rotation>
+    </tile>
+</level>
+

@@ -10,7 +10,9 @@ package
         private var vpX:Number;
         private var vpY:Number;
 
-        public function Tile(x:Number, y:Number, vpX:Number, vpY:Number)
+        public function Tile(rotation:Number,
+                             scaleAmount:Number,
+                             vpX:Number, vpY:Number)
         {
             this.vpX = vpX;
             this.vpY = vpY;
@@ -65,9 +67,12 @@ package
                 var point:Point3D = points[i];
                 point.setVanishingPoint(vpX, vpY);
                 point.setCenter(0, 0, 200);
-                point.x += x;
-                point.y += y;
+                //point.x += x;
+                //point.y += y;
             }
+
+            scale(scaleAmount);
+            rotate(rotation);
             
         }
 

@@ -5,9 +5,11 @@ package
 
         private var triangles:Array;
 
-        public function TileL(x:Number, y:Number, vpX:Number, vpY:Number)
+        public function TileL(rotation:Number,
+                              scaleAmount:Number,
+                              vpX:Number, vpY:Number)
         {
-            super(x, y, vpX, vpY);
+            super(rotation, scaleAmount, vpX, vpY);
 
             triangles = [
                 new Triangle(points[7], points[28], points[26], 0x8cd19d),
