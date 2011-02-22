@@ -9,6 +9,9 @@ package
         private var fl:Number = 250;
         private var vpX:Number;
         private var vpY:Number;
+        private var _x:Number = 0;
+        private var _y:Number = 0;
+        private var _z:Number = 0;
 
         public function Tile(rotation:Number,
                              scaleAmount:Number,
@@ -95,13 +98,48 @@ package
             }
         }
 
-        public function translate(x:Number, y:Number):void
+        public function translate(x:Number, y:Number, z:Number):void
         {
+            _x += x;
+            _y += y;
+            _z += z;
+
             for(var i:uint = 0; i < points.length; i++)
             {
                 points[i].x += x;
                 points[i].y += y;
+                points[i].z += z;
             }
+        }
+
+        public function get x():Number
+        {
+            return _x;
+        }
+
+        public function set x(val:Number):void
+        {
+            translate(val, 0, 0);
+        }
+
+        public function get y():Number
+        {
+            return _y;
+        }
+
+        public function set y(val:Number):void
+        {
+            translate(0, val, 0);
+        }
+
+        public function get z():Number
+        {
+            return _z;
+        }
+
+        public function set z(val:Number):void
+        {
+            translate(0, 0, val);
         }
 
         public function get width():Number
