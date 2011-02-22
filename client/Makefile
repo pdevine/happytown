@@ -1,9 +1,26 @@
+SOURCES = \
+	HappyTown.as \
+	LevelSelect.as \
+	Light.as \
+	Menu.as \
+	MenuItem.as \
+	Point3D.as \
+	Tile.as \
+	TileI.as \
+	TileL.as \
+	TileT.as \
+	Tiles.as \
+	Triangle.as \
 
 BIN_DIR = /Developer/SDKs/flex_sdk_4.1/bin
-FLAGS = --debug=true --use-network=false
+FLAGS = -static-link-runtime-shared-libraries=true -debug=true -use-network=false
+
+happytown: $(SOURCES)
+	$(BIN_DIR)/mxmlc $(FLAGS) happytown.as
 
 %.swf: %.as
 	$(BIN_DIR)/mxmlc $(FLAGS) $<
+
 
 clean:
 	rm -f *.swf
