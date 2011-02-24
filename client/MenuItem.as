@@ -60,7 +60,6 @@ package
 
         private function onMouseDown(event:MouseEvent):void
         {
-            trace("mouse down!");
             y -= 3;
             x -= 3;
 
@@ -76,7 +75,7 @@ package
         private function onMouseUp(event:MouseEvent):void
         {
             resetSprite();
-            trace("firing", textField.text);
+            trace("fired: ", textField.text);
             stage.dispatchEvent(new MenuItemEvent(textField.text));
         }
 

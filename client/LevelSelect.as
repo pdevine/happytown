@@ -9,8 +9,6 @@ package
     public class LevelSelect extends MenuItem
     {
 
-        public var currentLevel:int = 5;
-
         private var decrementLevel:TextField;
         private var incrementLevel:TextField;
         private var levelNumber:TextField;
@@ -29,7 +27,8 @@ package
             decrementLevel.x = textField.width + 20;
             addChild(decrementLevel);
 
-            levelNumber = createTextField(String(currentLevel));
+            var dm:DataManager = DataManager.getInstance();
+            levelNumber = createTextField(String(dm.currentLevel));
             levelNumber.x = decrementLevel.x + decrementLevel.width + 5;
             addChild(levelNumber);
 
@@ -82,8 +81,9 @@ package
 
         private function onMouseDecrementUp(event:MouseEvent):void
         {
-            currentLevel = Math.max(1, currentLevel - 1);
-            levelNumber.text = String(currentLevel);
+            var dm:DataManager = DataManager.getInstance();
+            dm.currentLevel = Math.max(1, dm.currentLevel - 1);
+            levelNumber.text = String(dm.currentLevel);
 
             resetDecrementSprite();
         }
@@ -127,8 +127,9 @@ package
 
         private function onMouseIncrementUp(event:MouseEvent):void
         {
-            currentLevel = Math.min(totalLevels, currentLevel + 1);
-            levelNumber.text = String(currentLevel);
+            var dm:DataManager = DataManager.getInstance();
+            dm.currentLevel = Math.min(totalLevels, dm.currentLevel + 1);
+            levelNumber.text = String(dm.currentLevel);
 
             resetIncrementSprite();
         }
@@ -138,9 +139,9 @@ package
             incrementLevel.y += 3;
             incrementLevel.x += 3;
 
-            stage.removeEventListener(
+            incrementLevel.removeEventListener(
                 MouseEvent.MOUSE_OUT, onMouseIncrementOut);
-            stage.removeEventListener(
+            incrementLevel.removeEventListener(
                 MouseEvent.MOUSE_UP, onMouseIncrementUp);
         }
         

@@ -5,7 +5,7 @@ package
         private static var instance:DataManager;
         private static var allowInstantiation:Boolean;
 
-        public var foo:String = "foo bar baz!";
+        public var currentLevel:uint = 1;
 
         public static function getInstance():DataManager
         {

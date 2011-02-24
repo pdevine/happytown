@@ -54,8 +54,6 @@ package
 
             addEventListener(Event.ENTER_FRAME, onEnterFrame);
             stage.addEventListener(MenuItemEvent.CONTROL_TYPE, onMenuItemEvent);
-            var dm:DataManager = DataManager.getInstance();
-            trace(dm.foo);
 
         }
 
@@ -72,8 +70,11 @@ package
 
         private function onMenuItemEvent(event:MenuItemEvent):void
         {
-            trace("menuItemEvent!");
-            trace(event.command);
+            if(event.command == "start")
+            {
+                var dm:DataManager = DataManager.getInstance();
+                trace("Level selected: ", dm.currentLevel);
+            }
         }
     }
 }
