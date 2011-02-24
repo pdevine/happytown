@@ -42,8 +42,16 @@ package
         {
             decrementLevel.addEventListener(
                 MouseEvent.MOUSE_DOWN, onMouseDecrementDown);
+            decrementLevel.addEventListener(
+                MouseEvent.MOUSE_OVER, onMouseDecrementOver);
+            decrementLevel.addEventListener(
+                MouseEvent.MOUSE_OUT, onMouseDecrementOverOut);
             incrementLevel.addEventListener(
                 MouseEvent.MOUSE_DOWN, onMouseIncrementDown);
+            incrementLevel.addEventListener(
+                MouseEvent.MOUSE_OVER, onMouseIncrementOver);
+            incrementLevel.addEventListener(
+                MouseEvent.MOUSE_OUT, onMouseIncrementOverOut);
         }
 
         private function onMouseDecrementDown(event:MouseEvent):void
@@ -52,17 +60,41 @@ package
             decrementLevel.x -= 3;
 
             decrementLevel.addEventListener(
+                MouseEvent.MOUSE_OUT, onMouseDecrementOut);
+            decrementLevel.addEventListener(
                 MouseEvent.MOUSE_UP, onMouseDecrementUp);
+        }
+
+        private function onMouseDecrementOver(event:MouseEvent):void
+        {
+            decrementLevel.textColor = 0xff0000;
+        }
+
+        private function onMouseDecrementOverOut(event:MouseEvent):void
+        {
+            decrementLevel.textColor = 0x000000;
+        }
+
+        private function onMouseDecrementOut(event:MouseEvent):void
+        {
+            resetDecrementSprite();
         }
 
         private function onMouseDecrementUp(event:MouseEvent):void
         {
-            decrementLevel.y += 3;
-            decrementLevel.x += 3;
-
             currentLevel = Math.max(1, currentLevel - 1);
             levelNumber.text = String(currentLevel);
 
+            resetDecrementSprite();
+        }
+
+        private function resetDecrementSprite():void
+        {
+            decrementLevel.y += 3;
+            decrementLevel.x += 3;
+
+            decrementLevel.removeEventListener(
+                MouseEvent.MOUSE_OUT, onMouseDecrementOut);
             decrementLevel.removeEventListener(
                 MouseEvent.MOUSE_UP, onMouseDecrementUp);
         }
@@ -73,19 +105,44 @@ package
             incrementLevel.x -= 3;
 
             incrementLevel.addEventListener(
+                MouseEvent.MOUSE_OUT, onMouseIncrementOut);
+            incrementLevel.addEventListener(
                 MouseEvent.MOUSE_UP, onMouseIncrementUp);
+        }
+
+        private function onMouseIncrementOver(event:MouseEvent):void
+        {
+            incrementLevel.textColor = 0xff0000;
+        }
+
+        private function onMouseIncrementOverOut(event:MouseEvent):void
+        {
+            incrementLevel.textColor = 0x000000;
+        }
+
+        private function onMouseIncrementOut(event:MouseEvent):void
+        {
+            resetIncrementSprite();
         }
 
         private function onMouseIncrementUp(event:MouseEvent):void
         {
-            incrementLevel.y += 3;
-            incrementLevel.x += 3;
-
             currentLevel = Math.min(totalLevels, currentLevel + 1);
             levelNumber.text = String(currentLevel);
 
-            incrementLevel.removeEventListener(
+            resetIncrementSprite();
+        }
+
+        private function resetIncrementSprite():void
+        {
+            incrementLevel.y += 3;
+            incrementLevel.x += 3;
+
+            stage.removeEventListener(
+                MouseEvent.MOUSE_OUT, onMouseIncrementOut);
+            stage.removeEventListener(
                 MouseEvent.MOUSE_UP, onMouseIncrementUp);
         }
+        
     }
 }

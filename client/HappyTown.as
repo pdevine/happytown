@@ -6,6 +6,8 @@ package
     import flash.text.TextFormat;
     import flash.events.Event;
 
+    import MenuItemEvent;
+
     public class HappyTown extends Sprite
     {
 
@@ -51,6 +53,9 @@ package
             var menu:Menu = new Menu(this);
 
             addEventListener(Event.ENTER_FRAME, onEnterFrame);
+            stage.addEventListener(MenuItemEvent.CONTROL_TYPE, onMenuItemEvent);
+            var dm:DataManager = DataManager.getInstance();
+            trace(dm.foo);
 
         }
 
@@ -65,5 +70,10 @@ package
 
         }
 
+        private function onMenuItemEvent(event:MenuItemEvent):void
+        {
+            trace("menuItemEvent!");
+            trace(event.command);
+        }
     }
 }

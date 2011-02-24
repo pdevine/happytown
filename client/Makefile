@@ -4,6 +4,7 @@ SOURCES = \
 	Light.as \
 	Menu.as \
 	MenuItem.as \
+	MenuItemEvent.as \
 	Point3D.as \
 	Tile.as \
 	TileI.as \
