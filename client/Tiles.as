@@ -11,8 +11,8 @@ package
         private var movingTiles:Array;
 
         private var tile:TileT;
-        private var vpX:Number = stage.stageWidth / 2;
-        private var vpY:Number = stage.stageHeight / 2;
+        private var vpX:Number;
+        private var vpY:Number;
         private var rows:uint = 3;
         private var columns:uint = 3;
 
@@ -26,22 +26,14 @@ package
 
         public function Tiles()
         {
-            init();
-        }
-
-        private function init():void
-        {
             tiles = new Array();
             movingTiles = new Array();
 
-            loadLevel("level1.xml");
-
-            //createRandomBoard();
-
-            addEventListener(Event.ENTER_FRAME, onEnterFrame);
+            trace("added stage event listener");
+            this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
         }
 
-        private function createRandomBoard():void
+        public function createRandomBoard():void
         {
             var tileTypes:Array = [TileI, TileL, TileT];
             var tile:Tile;
@@ -85,7 +77,7 @@ package
             }
         }
 
-        private function loadLevel(levelName:String):void
+        public function loadLevel(levelName:String):void
         {
             trace("loading level");
             var xmlLoader:URLLoader = new URLLoader();
@@ -141,7 +133,7 @@ package
             }
         }
 
-        private function onEnterFrame(event:Event):void
+        public function draw():void
         {
             graphics.clear();
             // sort objects here
@@ -149,6 +141,18 @@ package
             {
                 tiles[i].draw(graphics);
             }
+        }
+
+        private function onAddedToStage(event:Event):void
+        {
+            trace("set vanishing point");
+            vpX = stage.stageWidth / 2;
+            vpY = stage.stageHeight / 2;
+        }
+
+        private function onEnterFrame(event:Event):void
+        {
+            draw();
         }
     }
 }

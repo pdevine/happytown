@@ -11,6 +11,7 @@ SOURCES = \
 	TileL.as \
 	TileT.as \
 	Tiles.as \
+	Title.as \
 	Triangle.as \
 
 BIN_DIR = /Developer/SDKs/flex_sdk_4.1/bin
