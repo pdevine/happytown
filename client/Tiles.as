@@ -10,7 +10,10 @@ package
         private var tiles:Array;
         private var movingTiles:Array;
 
+        private var floatingTile:Tile;
+
         private var tile:TileT;
+        private var fl:Number = 250;
         private var vpX:Number;
         private var vpY:Number;
         private var rows:uint = 3;
@@ -92,21 +95,37 @@ package
 
             XML.ignoreWhitespace = true;
             var tileData:XML = new XML(event.target.data);
+            var scaling:Number = Number(tileData.@scaling);
+            rows = uint(tileData.@rows);
+            columns = uint(tileData.@columns);
+            trace("scaling: ", tileData.@scaling);
+
             for(var i:uint = 0; i < tileData.tile.length(); i++)
             {
                 var tileType:String = tileData.tile[i].type;
                 var rotation:Number = Number(tileData.tile[i].rotation);
-                if(tileType == 'tile_l')
-                    tile = new TileL(rotation, 0.4, vpX, vpY);
-                else if(tileType == 'tile_i')
-                    tile = new TileI(rotation, 0.4, vpX, vpY);
-                else if(tileType == 'tile_t')
-                    tile = new TileT(rotation, 0.4, vpX, vpY);
-
+                tile = createTile(tileType, rotation, scaling, vpX, vpY);
                 tiles.push(tile);
             }
 
+            floatingTile = createTile(tileData.floating_tile[0].type,
+                                      0, scaling, vpX, vpY);
             fixTilePositions();
+        }
+
+        private function createTile(tileType:String,
+                                    rotation:Number,
+                                    scaling:Number,
+                                    vpX:Number, vpY:Number):Tile
+        {
+            if(tileType == 'tile_l')
+                return(new TileL(rotation, scaling, vpX, vpY));
+            else if(tileType == 'tile_i')
+                return(new TileI(rotation, scaling, vpX, vpY));
+            else if(tileType == 'tile_t')
+                return(new TileT(rotation, scaling, vpX, vpY));
+
+            return null;
         }
 
         public function moveTiles(position:uint, direction:uint):void
@@ -135,11 +154,20 @@ package
 
         public function draw():void
         {
+
             graphics.clear();
             // sort objects here
             for(var i:uint = 0; i < tiles.length; i++)
             {
                 tiles[i].draw(graphics);
+            }
+
+            if(floatingTile != null)
+            {
+                floatingTile.x = getWorldX(mouseX);
+                floatingTile.y = getWorldY(mouseY);
+                floatingTile.z = 0;
+                floatingTile.draw(graphics);
             }
         }
 
@@ -153,6 +181,18 @@ package
         private function onEnterFrame(event:Event):void
         {
             draw();
+        }
+
+        public function getWorldX(x:Number):Number
+        {
+            var scale:Number = fl / (fl + 200);
+            return (x - vpX) / scale;
+        }
+
+        public function getWorldY(y:Number):Number
+        {
+            var scale:Number = fl / (fl + 200);
+            return (y - vpY) / scale;
         }
     }
 }

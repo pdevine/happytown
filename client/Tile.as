@@ -119,7 +119,7 @@ package
 
         public function set x(val:Number):void
         {
-            translate(val, 0, 0);
+            translate(-_x + val, 0, 0);
         }
 
         public function get y():Number
@@ -129,7 +129,7 @@ package
 
         public function set y(val:Number):void
         {
-            translate(0, val, 0);
+            translate(0, -_y + val, 0);
         }
 
         public function get z():Number
@@ -139,7 +139,7 @@ package
 
         public function set z(val:Number):void
         {
-            translate(0, 0, val);
+            translate(0, 0, -_z + val);
         }
 
         public function get width():Number
@@ -185,6 +185,8 @@ package
 
         public function draw(g:Graphics):void
         {
+            triangles.sortOn("depth", Array.DESCENDING | Array.NUMERIC);
+
             for(var i:uint = 0; i < triangles.length; i++)
                 triangles[i].draw(g);
         }
