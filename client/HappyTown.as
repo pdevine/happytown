@@ -15,6 +15,8 @@ package
 
         private var drawMode:int = TITLE_MODE;
 
+        private var levels:Array = ["level1.xml", "level2.xml"];
+
         public function HappyTown()
         {
             title = new Title();
@@ -44,7 +46,7 @@ package
             if(event.command == "start")
             {
                 var dm:DataManager = DataManager.getInstance();
-                tiles.loadLevel("level1.xml");
+                tiles.loadLevel(levels[dm.currentLevel - 1]);
                 removeChild(title);
                 addChild(tiles);
 
