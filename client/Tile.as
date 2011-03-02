@@ -13,6 +13,11 @@ package
         private var _y:Number = 0;
         private var _z:Number = 0;
 
+        public var rotation:Number = 0;
+        public var targetRotation:Number = 0;
+
+        private const rotationSpeed:Number = 0.1;
+
         public function Tile(rotation:Number,
                              scaleAmount:Number,
                              vpX:Number, vpY:Number)
@@ -75,6 +80,8 @@ package
             }
 
             scale(scaleAmount);
+
+            targetRotation = rotation;
             rotate(rotation);
             
         }
@@ -171,20 +178,50 @@ package
             return end - start;
         }
 
-        public function rotate(angleZ:Number):void
+        public function rotateTo(angleZ:Number):void
         {
+            targetRotation += angleZ;
+        }
+
+        public function rotate(angleZ:Number, center:Boolean=true):void
+        {
+            rotation += angleZ;
+
             // convert to radians
             angleZ = angleZ / 180 * Math.PI;
 
             for(var i:uint = 0; i < points.length; i++)
             {
                 var point:Point3D = points[i];
+                if(center)
+                {
+                    point.x -= _x;
+                    point.y -= _y;
+                    point.z -= _z;
+                }
+
                 point.rotateZ(angleZ);
+
+                if(center)
+                {
+                    point.x += _x;
+                    point.y += _y;
+                    point.z += _z;
+                }
             }
         }
 
         public function draw(g:Graphics):void
         {
+            if(targetRotation != rotation)
+            {
+                rotate((targetRotation - rotation) * rotationSpeed);
+            }
+           // else if(targetRotation < rotation)
+           // {
+           //     rotate((targetRotation - rotation) * rotationSpeed);
+           // }
+
             triangles.sortOn("depth", Array.DESCENDING | Array.NUMERIC);
 
             for(var i:uint = 0; i < triangles.length; i++)

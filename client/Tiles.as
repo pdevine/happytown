@@ -4,6 +4,8 @@ package
     import flash.events.Event;
     import flash.net.URLLoader;
     import flash.net.URLRequest;
+    import flash.events.KeyboardEvent;
+    import flash.ui.Keyboard;
 
     public class Tiles extends Sprite
     {
@@ -176,11 +178,25 @@ package
             trace("set vanishing point");
             vpX = stage.stageWidth / 2;
             vpY = stage.stageHeight / 2;
+
+            stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
         }
 
         private function onEnterFrame(event:Event):void
         {
             draw();
+        }
+
+        private function onKeyDown(event:KeyboardEvent):void
+        {
+            if(event.keyCode == Keyboard.RIGHT)
+            {
+                floatingTile.rotateTo(90);
+            }
+            else if(event.keyCode == Keyboard.LEFT)
+            {
+                floatingTile.rotateTo(-90);
+            }
         }
 
         public function getWorldX(x:Number):Number
