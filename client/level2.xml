@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <level rows="3" columns="4" scaling="0.35">
+  <row>
     <tile>
         <type>tile_l</type>
         <rotation>0</rotation>
@@ -17,7 +18,8 @@
         <type>tile_l</type>
         <rotation>90</rotation>
     </tile>
-
+  </row>
+  <row>
     <tile>
         <type>tile_l</type>
         <rotation>0</rotation>
@@ -34,7 +36,8 @@
         <type>tile_t</type>
         <rotation>0</rotation>
     </tile>
-
+  </row>
+  <row>
     <tile>
         <type>tile_l</type>
         <rotation>270</rotation>
@@ -51,8 +54,9 @@
         <type>tile_l</type>
         <rotation>180</rotation>
     </tile>
-    <floating_tile>
-        <type>tile_l</type>
-    </floating_tile>
+  </row>
+  <floating_tile>
+      <type>tile_l</type>
+  </floating_tile>
 </level>
 

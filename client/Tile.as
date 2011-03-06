@@ -13,9 +13,14 @@ package
         private var _y:Number = 0;
         private var _z:Number = 0;
 
+        public var targetX:Number = 0;
+        public var targetY:Number = 0;
+        public var targetZ:Number = 0;
+
         public var rotation:Number = 0;
         public var targetRotation:Number = 0;
 
+        private const moveSpeed:Number = 0.1;
         private const rotationSpeed:Number = 0.1;
 
         public function Tile(rotation:Number,
@@ -105,11 +110,22 @@ package
             }
         }
 
+        public function moveTo(x:Number, y:Number, z:Number):void
+        {
+            targetX = x;
+            targetY = y;
+            targetZ = z;
+        }
+
         public function translate(x:Number, y:Number, z:Number):void
         {
             _x += x;
             _y += y;
             _z += z;
+
+            //targetX = _x;
+            //targetY = _y;
+            //targetZ = _z;
 
             for(var i:uint = 0; i < points.length; i++)
             {
@@ -151,8 +167,8 @@ package
 
         public function get width():Number
         {
-            var start:Number = 0;
-            var end:Number = 0;
+            var start:Number = points[0].x;
+            var end:Number = points[0].x;
 
             for(var i:uint = 0; i < points.length; i++)
             {
@@ -176,11 +192,6 @@ package
             }
 
             return end - start;
-        }
-
-        public function rotateTo(angleZ:Number):void
-        {
-            targetRotation += angleZ;
         }
 
         public function rotate(angleZ:Number, center:Boolean=true):void
@@ -213,14 +224,27 @@ package
 
         public function draw(g:Graphics):void
         {
+            var dx:Number = (targetX - _x) * moveSpeed;
+            var dy:Number = (targetY - _y) * moveSpeed;
+            var dz:Number = (targetZ - _z) * moveSpeed;
+
+            //trace(dx, dy, dz);
+
+            translate(dx, dy, dz);            
+
+            var dist:Number = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+            if(dist < 1)
+            {
+                x = targetX;
+                y = targetY;
+                z = targetZ;
+            }
+
             if(targetRotation != rotation)
             {
                 rotate((targetRotation - rotation) * rotationSpeed);
             }
-           // else if(targetRotation < rotation)
-           // {
-           //     rotate((targetRotation - rotation) * rotationSpeed);
-           // }
 
             triangles.sortOn("depth", Array.DESCENDING | Array.NUMERIC);
 

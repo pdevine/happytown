@@ -71,13 +71,14 @@ package
             {
                 for(var column:uint = 0; column < columns; column++)
                 {
-                    var tileNum:uint = (row * columns) + column;
-                    tile = tiles[tileNum];
+                    //var tileNum:uint = (row * columns) + column;
+                    tile = tiles[row][column];
                     var x:Number = tile.width * column - tile.width;
                     var y:Number = tile.height * row - tile.height;
-                    tile.translate(x, y, 0);
-                    rowPositions.push(y);
-                    columnPositions.push(x);
+                    tile.x = x;
+                    tile.y = y;
+                    tile.targetX = x;
+                    tile.targetY = y;
                 }
             }
         }
@@ -94,6 +95,7 @@ package
         {
             trace("xml loaded");
             var tile:Tile;
+            var row:Array;
 
             XML.ignoreWhitespace = true;
             var tileData:XML = new XML(event.target.data);
@@ -102,12 +104,20 @@ package
             columns = uint(tileData.@columns);
             trace("scaling: ", tileData.@scaling);
 
-            for(var i:uint = 0; i < tileData.tile.length(); i++)
+            for(var r:uint = 0; r < tileData.row.length(); r++)
             {
-                var tileType:String = tileData.tile[i].type;
-                var rotation:Number = Number(tileData.tile[i].rotation);
-                tile = createTile(tileType, rotation, scaling, vpX, vpY);
-                tiles.push(tile);
+                trace("row", r);
+                row = new Array();
+                for(var i:uint = 0; i < tileData.row[r].tile.length(); i++)
+                {
+                    trace("tile");
+                    var tileType:String = tileData.row[r].tile[i].type;
+                    var rotation:Number = 
+                        Number(tileData.row[r].tile[i].rotation);
+                    tile = createTile(tileType, rotation, scaling, vpX, vpY);
+                    row.push(tile);
+                }
+                tiles.push(row);
             }
 
             floatingTile = createTile(tileData.floating_tile[0].type,
@@ -132,24 +142,22 @@ package
 
         public function moveTiles(position:uint, direction:uint):void
         {
-            // XXX - check that direction is NORTH, EAST, SOUTH, WEST
             var i:uint;
+
+            trace("move tiles: ", position, direction);
+            trace("row positions", rowPositions);
 
             if(direction == EAST || direction == WEST)
             {
-                for(i = 0; i < tiles.length; i++)
+                for(i = 0; i < tiles[position].length; i++)
                 {
-                    // find the tiles in our row and flag them to be moved
-                    if(rowPositions.indexOf(tiles[i]) == position)
-                    {
-                        movingTiles.push(tiles[i]);
-                        trace("pushed tile");
+                    if(direction == WEST) {
+                        trace("moving: ", tiles[position][i].width);
+                        tiles[position][i].targetX += tiles[position][i].width;
+                    } else {
+                        trace("moving: ", tiles[position][i].width);
+                        tiles[position][i].targetX -= tiles[position][i].width;
                     }
-                }
-                movingTiles.sortOn("x", Array.DESCENDING | Array.NUMERIC);
-                for(i = 0; i < movingTiles.length; i++)
-                {
-                    movingTiles[i].x += movingTiles[i].width;
                 }
             }
         }
@@ -159,9 +167,12 @@ package
 
             graphics.clear();
             // sort objects here
-            for(var i:uint = 0; i < tiles.length; i++)
+            for(var row:uint = 0; row < tiles.length; row++)
             {
-                tiles[i].draw(graphics);
+                for(var column:uint = 0; column < tiles[row].length; column++)
+                {
+                    tiles[row][column].draw(graphics);
+                }
             }
 
             if(floatingTile != null)
@@ -189,13 +200,22 @@ package
 
         private function onKeyDown(event:KeyboardEvent):void
         {
-            if(event.keyCode == Keyboard.RIGHT)
+            switch(event.keyCode)
             {
-                floatingTile.rotateTo(90);
-            }
-            else if(event.keyCode == Keyboard.LEFT)
-            {
-                floatingTile.rotateTo(-90);
+                case Keyboard.RIGHT:
+                    floatingTile.targetRotation += 90;
+                    break;
+                case Keyboard.LEFT:
+                    floatingTile.targetRotation -= 90;
+                    break;
+                case Keyboard.UP:
+                    moveTiles(1, EAST);
+                    break;
+                case Keyboard.DOWN:
+                    moveTiles(1, WEST);
+                    break;
+                default:
+                    break;
             }
         }
 
