@@ -142,23 +142,59 @@ package
 
         public function moveTiles(position:uint, direction:uint):void
         {
-            var i:uint;
+            var i:int;
 
             trace("move tiles: ", position, direction);
             trace("row positions", rowPositions);
 
-            if(direction == EAST || direction == WEST)
+            var newFloatingTile:Tile;
+            var width:uint = tiles[position].length;
+
+            if(direction == WEST)
             {
-                for(i = 0; i < tiles[position].length; i++)
+
+                floatingTile.x = tiles[position][width-1].x + 
+                                 floatingTile.width;
+                floatingTile.targetX = tiles[position][width-1].x;
+                floatingTile.y = tiles[position][width-1].y;
+                floatingTile.targetY = floatingTile.y;
+
+                newFloatingTile = tiles[position][0];
+
+                for(i = 0; i < width; i++)
                 {
-                    if(direction == WEST) {
-                        trace("moving: ", tiles[position][i].width);
-                        tiles[position][i].targetX += tiles[position][i].width;
-                    } else {
-                        trace("moving: ", tiles[position][i].width);
-                        tiles[position][i].targetX -= tiles[position][i].width;
-                    }
+                    trace("moving: ", tiles[position][i].width);
+                    tiles[position][i].targetX -= tiles[position][i].width;
+                    if(i < width-1)
+                        tiles[position][i] = tiles[position][i+1];
                 }
+                tiles[position][width-1] = floatingTile;
+                floatingTile = newFloatingTile;
+            }
+            else
+            {
+
+                floatingTile.x = tiles[position][0].x - floatingTile.width;
+                floatingTile.targetX = tiles[position][0].x;
+                floatingTile.y = tiles[position][0].y;
+                floatingTile.targetY = floatingTile.y;
+
+                newFloatingTile = tiles[position][width-1]
+
+                for(i = width-1; i >= 0; i--)
+                {
+                    trace("i", i);
+                    tiles[position][i].targetX += tiles[position][i].width;
+                    if(i > 0)
+                        tiles[position][i] = tiles[position][i-1];
+                }
+
+                tiles[position][0] = floatingTile;
+                floatingTile = newFloatingTile;
+
+                //newFloatingTile = tiles[position][width-1];
+                //tiles[position][0] = floatingTile;
+                //floatingTile = newFloatingTile;
             }
         }
 

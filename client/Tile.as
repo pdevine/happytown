@@ -234,7 +234,7 @@ package
 
             var dist:Number = Math.sqrt(dx*dx + dy*dy + dz*dz);
 
-            if(dist < 1)
+            if(dist < 0.5)
             {
                 x = targetX;
                 y = targetY;
