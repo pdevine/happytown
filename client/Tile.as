@@ -181,8 +181,8 @@ package
 
         public function get height():Number
         {
-            var start:Number = 0;
-            var end:Number = 0;
+            var start:Number = points[0].y;
+            var end:Number = points[0].y;
 
             // find first and last point
             for(var i:uint = 0; i < points.length; i++)

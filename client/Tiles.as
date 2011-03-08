@@ -149,10 +149,10 @@ package
 
             var newFloatingTile:Tile;
             var width:uint = tiles[position].length;
+            var height:uint = tiles.length;
 
             if(direction == WEST)
             {
-
                 floatingTile.x = tiles[position][width-1].x + 
                                  floatingTile.width;
                 floatingTile.targetX = tiles[position][width-1].x;
@@ -171,7 +171,7 @@ package
                 tiles[position][width-1] = floatingTile;
                 floatingTile = newFloatingTile;
             }
-            else
+            else if(direction == EAST)
             {
 
                 floatingTile.x = tiles[position][0].x - floatingTile.width;
@@ -179,7 +179,7 @@ package
                 floatingTile.y = tiles[position][0].y;
                 floatingTile.targetY = floatingTile.y;
 
-                newFloatingTile = tiles[position][width-1]
+                newFloatingTile = tiles[position][width-1];
 
                 for(i = width-1; i >= 0; i--)
                 {
@@ -191,10 +191,44 @@ package
 
                 tiles[position][0] = floatingTile;
                 floatingTile = newFloatingTile;
+            }
+            else if(direction == SOUTH)
+            {
+                floatingTile.y = tiles[0][position].y - floatingTile.width;
+                floatingTile.targetY = tiles[0][position].y;
+                floatingTile.x = tiles[0][position].x;
+                floatingTile.targetX = floatingTile.x;
 
-                //newFloatingTile = tiles[position][width-1];
-                //tiles[position][0] = floatingTile;
-                //floatingTile = newFloatingTile;
+                newFloatingTile = tiles[height-1][position];
+
+                for(i = height-1; i >= 0; i--)
+                {
+                    tiles[i][position].targetY += tiles[i][position].height;
+                    if(i > 0)
+                        tiles[i][position] = tiles[i-1][position];
+                }
+
+                tiles[0][position] = floatingTile;
+                floatingTile = newFloatingTile;
+            }
+            else if(direction == NORTH)
+            {
+                floatingTile.y = tiles[height-1][position].y + 
+                                 floatingTile.height;
+                floatingTile.targetY = tiles[height-1][position].y;
+                floatingTile.x = tiles[height-1][position].x;
+                floatingTile.targetX = floatingTile.x;
+
+                newFloatingTile = tiles[0][position];
+
+                for(i = 0; i < height; i++)
+                {
+                    tiles[i][position].targetY -= tiles[i][position].height;
+                    if(i < height-1)
+                        tiles[i][position] = tiles[i+1][position];
+                }
+                tiles[height-1][position] = floatingTile;
+                floatingTile = newFloatingTile;
             }
         }
 
@@ -239,16 +273,24 @@ package
             switch(event.keyCode)
             {
                 case Keyboard.RIGHT:
-                    floatingTile.targetRotation += 90;
-                    break;
-                case Keyboard.LEFT:
-                    floatingTile.targetRotation -= 90;
-                    break;
-                case Keyboard.UP:
                     moveTiles(1, EAST);
                     break;
-                case Keyboard.DOWN:
+                case Keyboard.LEFT:
                     moveTiles(1, WEST);
+                    break;
+                case Keyboard.DOWN:
+                    moveTiles(1, SOUTH);
+                    break;
+                case Keyboard.UP:
+                    moveTiles(1, NORTH);
+                    break;
+                case 88:
+                    // x
+                    floatingTile.targetRotation += 90;
+                    break;
+                case 90:
+                    // z
+                    floatingTile.targetRotation -= 90;
                     break;
                 default:
                     break;
