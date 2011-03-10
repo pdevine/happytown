@@ -8,6 +8,8 @@ package
     import flash.events.KeyboardEvent;
     import flash.ui.Keyboard;
 
+    import MovingTilesEvent;
+
     public class Tiles extends Sprite
     {
         private var tiles:Array;
@@ -24,6 +26,8 @@ package
 
         private var rowPositions:Array;
         private var columnPositions:Array;
+
+        public var followMouse:Boolean = true;
 
         public const NORTH:uint = 1;
         public const EAST:uint = 2;
@@ -126,6 +130,8 @@ package
             fixTilePositions();
 
             stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+            stage.addEventListener(MovingTilesEvent.CONTROL_TYPE,
+                                   onMovingTiles);
         }
 
         private function createTile(tileType:String,
@@ -143,9 +149,20 @@ package
             return null;
         }
 
+        private function onMovingTiles(event:MovingTilesEvent):void
+        {
+            if(event.command == "finished")
+            {
+                trace("move finished!");
+                followMouse = true;
+                floatingTile.moving = true;
+            }
+        }
+
         public function moveTiles(position:uint, direction:uint):void
         {
             var i:int;
+            stage.dispatchEvent(new MovingTilesEvent("moving"));
 
             trace("move tiles: ", position, direction);
             trace("row positions", rowPositions);
@@ -154,6 +171,9 @@ package
             var width:uint = tiles[position].length;
             var height:uint = tiles.length;
 
+            trace("don't follow mouse");
+            followMouse = false;
+
             if(direction == WEST)
             {
                 floatingTile.x = tiles[position][width-1].x + 
@@ -161,12 +181,14 @@ package
                 floatingTile.targetX = tiles[position][width-1].x;
                 floatingTile.y = tiles[position][width-1].y;
                 floatingTile.targetY = floatingTile.y;
+                floatingTile.moving = true;
 
                 newFloatingTile = tiles[position][0];
 
                 for(i = 0; i < width; i++)
                 {
                     trace("moving: ", tiles[position][i].width);
+                    tiles[position][i].moving = true;
                     tiles[position][i].targetX -= tiles[position][i].width;
                     if(i < width-1)
                         tiles[position][i] = tiles[position][i+1];
@@ -181,12 +203,14 @@ package
                 floatingTile.targetX = tiles[position][0].x;
                 floatingTile.y = tiles[position][0].y;
                 floatingTile.targetY = floatingTile.y;
+                floatingTile.moving = true;
 
                 newFloatingTile = tiles[position][width-1];
 
                 for(i = width-1; i >= 0; i--)
                 {
                     trace("i", i);
+                    tiles[position][i].moving = true;
                     tiles[position][i].targetX += tiles[position][i].width;
                     if(i > 0)
                         tiles[position][i] = tiles[position][i-1];
@@ -201,11 +225,13 @@ package
                 floatingTile.targetY = tiles[0][position].y;
                 floatingTile.x = tiles[0][position].x;
                 floatingTile.targetX = floatingTile.x;
+                floatingTile.moving = true;
 
                 newFloatingTile = tiles[height-1][position];
 
                 for(i = height-1; i >= 0; i--)
                 {
+                    tiles[i][position].moving = true;
                     tiles[i][position].targetY += tiles[i][position].height;
                     if(i > 0)
                         tiles[i][position] = tiles[i-1][position];
@@ -221,11 +247,13 @@ package
                 floatingTile.targetY = tiles[height-1][position].y;
                 floatingTile.x = tiles[height-1][position].x;
                 floatingTile.targetX = floatingTile.x;
+                floatingTile.moving = true;
 
                 newFloatingTile = tiles[0][position];
 
                 for(i = 0; i < height; i++)
                 {
+                    tiles[i][position].moving = true;
                     tiles[i][position].targetY -= tiles[i][position].height;
                     if(i < height-1)
                         tiles[i][position] = tiles[i+1][position];
@@ -244,16 +272,20 @@ package
             {
                 for(var column:uint = 0; column < tiles[row].length; column++)
                 {
-                    tiles[row][column].draw(graphics);
+                    tiles[row][column].draw(stage, graphics);
                 }
             }
 
             if(floatingTile != null)
             {
-                floatingTile.x = getWorldX(mouseX);
-                floatingTile.y = getWorldY(mouseY);
-                floatingTile.z = 0;
-                floatingTile.draw(graphics);
+                if(followMouse)
+                {
+                    floatingTile.x = getWorldX(mouseX);
+                    floatingTile.y = getWorldY(mouseY);
+                    floatingTile.z = 0;
+                }
+
+                floatingTile.draw(stage, graphics);
             }
         }
 

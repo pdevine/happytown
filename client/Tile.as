@@ -1,6 +1,7 @@
 package
 {
     import flash.display.Graphics;
+    import flash.display.Stage;
 
     public class Tile
     {
@@ -22,6 +23,8 @@ package
 
         private const moveSpeed:Number = 0.1;
         private const rotationSpeed:Number = 0.1;
+
+        public var moving:Boolean = false;
 
         public function Tile(rotation:Number,
                              scaleAmount:Number,
@@ -222,23 +225,28 @@ package
             }
         }
 
-        public function draw(g:Graphics):void
+        public function draw(stage:Stage, g:Graphics):void
         {
-            var dx:Number = (targetX - _x) * moveSpeed;
-            var dy:Number = (targetY - _y) * moveSpeed;
-            var dz:Number = (targetZ - _z) * moveSpeed;
-
-            //trace(dx, dy, dz);
-
-            translate(dx, dy, dz);            
-
-            var dist:Number = Math.sqrt(dx*dx + dy*dy + dz*dz);
-
-            if(dist < 0.5)
+            if(moving)
             {
-                x = targetX;
-                y = targetY;
-                z = targetZ;
+                var dx:Number = (targetX - _x) * moveSpeed;
+                var dy:Number = (targetY - _y) * moveSpeed;
+                var dz:Number = (targetZ - _z) * moveSpeed;
+
+                //trace(dx, dy, dz);
+
+                translate(dx, dy, dz);            
+
+                var dist:Number = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+                if(dist < 0.5)
+                {
+                    x = targetX;
+                    y = targetY;
+                    z = targetZ;
+                    moving = false;
+                    stage.dispatchEvent(new MovingTilesEvent("finished"));
+                }
             }
 
             if(targetRotation != rotation)
