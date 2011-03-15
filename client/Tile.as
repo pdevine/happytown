@@ -18,6 +18,8 @@ package
         public var targetY:Number = 0;
         public var targetZ:Number = 0;
 
+        public var exits:int = 0;
+
         public var rotation:Number = 0;
         public var targetRotation:Number = 0;
 
@@ -180,6 +182,16 @@ package
             }
 
             return end - start;
+        }
+
+        public function rotateClockwise():void
+        {
+            targetRotation += 90;
+        }
+
+        public function rotateAnticlockwise():void
+        {
+            targetRotation -= 90;
         }
 
         public function get height():Number

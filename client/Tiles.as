@@ -7,11 +7,17 @@ package
     import flash.events.MouseEvent;
     import flash.events.KeyboardEvent;
     import flash.ui.Keyboard;
+    import flash.utils.Dictionary;
 
     import MovingTilesEvent;
 
     public class Tiles extends Sprite
     {
+        public static const NORTH:uint = 1;
+        public static const EAST:uint = 2;
+        public static const SOUTH:uint = 4;
+        public static const WEST:uint = 8;
+
         private var tiles:Array;
         private var movingTiles:Array;
 
@@ -28,11 +34,6 @@ package
         private var columnPositions:Array;
 
         public var followMouse:Boolean = true;
-
-        public const NORTH:uint = 1;
-        public const EAST:uint = 2;
-        public const SOUTH:uint = 4;
-        public const WEST:uint = 8;
 
         public function Tiles()
         {
@@ -145,6 +146,20 @@ package
                 return(new TileI(rotation, scaling, vpX, vpY));
             else if(tileType == 'tile_t')
                 return(new TileT(rotation, scaling, vpX, vpY));
+
+            return null;
+        }
+
+        private function getTileGraph():Dictionary
+        {
+            for(var row:uint = 0; row < tiles.length; row++)
+            {
+                for(var column:uint = 0; column < tiles[row].length; column++)
+                {
+                    var tile:Tile = tiles[row][column];
+
+                }
+            }
 
             return null;
         }
@@ -378,11 +393,11 @@ package
                     break;
                 case 88:
                     // x
-                    floatingTile.targetRotation += 90;
+                    floatingTile.rotateClockwise();
                     break;
                 case 90:
                     // z
-                    floatingTile.targetRotation -= 90;
+                    floatingTile.rotateAnticlockwise();
                     break;
                 default:
                     break;

@@ -1,5 +1,7 @@
 package
 {
+    import Tiles;
+
     public class TileL extends Tile
     {
 
@@ -81,6 +83,8 @@ package
             ];
 
             init(triangles);
+
+            exits = Tiles.EAST | Tiles.SOUTH;
 
         }
     }

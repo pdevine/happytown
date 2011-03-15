@@ -44,7 +44,7 @@
     </tile>
   </row>
   <floating_tile>
-      <type>tile_l</type>
+      <type>tile_i</type>
   </floating_tile>
 </level>
 

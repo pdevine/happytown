@@ -1,5 +1,7 @@
 package
 {
+    import Tiles;
+
     public class TileI extends Tile
     {
 
@@ -48,6 +50,8 @@ package
             ];
 
             init(triangles);
+
+            exits = Tiles.NORTH | Tiles.SOUTH;
 
         }
     }
