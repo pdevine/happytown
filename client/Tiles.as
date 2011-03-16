@@ -150,18 +150,63 @@ package
             return null;
         }
 
-        private function getTileGraph():Dictionary
+        private function getTileGraph():TraversalGraph
         {
-            for(var row:uint = 0; row < tiles.length; row++)
-            {
-                for(var column:uint = 0; column < tiles[row].length; column++)
+            var g:TraversalGraph = new TraversalGraph();
+
+            var row:uint;
+            var column:uint;
+
+            var v1:uint;
+            var v2:uint;
+
+            trace("columns:", columns);
+            trace("rows:", rows);
+
+            for(row = 0; row < tiles.length; row++)
+                for(column = 0; column < tiles[row].length; column++)
                 {
-                    var tile:Tile = tiles[row][column];
+                    g.addVertex(row * columns + column);
+                    var tile:Tile = tiles[row][column]
+                    if(tile.hasDir(NORTH))
+                        trace("has north");
+                    if(tile.hasDir(EAST))
+                        trace("has east");
+                    if(tile.hasDir(SOUTH))
+                        trace("has south");
+                    if(tile.hasDir(WEST))
+                        trace("has west");
+                }
+
+            for(row = 0; row < tiles.length; row++)
+            {
+                for(column = 0; column < tiles[row].length; column++)
+                {
+                    trace("row:", row, "col:", column);
+                    trace(column < columns-1);
+                    if(column < columns-1 &&
+                       tiles[row][column].hasDir(EAST) &&
+                       tiles[row][column+1].hasDir(WEST))
+                    {
+                        v1 = row * columns + column;
+                        v2 = row * columns + column + 1;
+                        g.addEdge(v1, v2);
+                        g.addEdge(v2, v1);
+                    }
+                    if(row < rows-1 &&
+                       tiles[row][column].hasDir(SOUTH) &&
+                       tiles[row+1][column].hasDir(NORTH))
+                    {
+                        v1 = row * columns + column;
+                        v2 = (row+1) * columns + column;
+                        g.addEdge(v1, v2);
+                        g.addEdge(v2, v1);
+                    }
 
                 }
             }
 
-            return null;
+            return g;
         }
 
         private function onMovingTiles(event:MovingTilesEvent):void
@@ -337,6 +382,13 @@ package
             else if(wy > 0 && row == -1 && column > 0 && column < columns) 
                 moveTiles(column, NORTH);
 
+            else if(column > -1 && row > -1)
+            {
+                var g:TraversalGraph = getTileGraph();
+                var a:Array = g.findShortestPath(0, row * columns + column, []);
+                trace("path:", a);
+            }
+
         }
 
         private function getRow(y:Number):int
@@ -394,10 +446,26 @@ package
                 case 88:
                     // x
                     floatingTile.rotateClockwise();
+                    if(floatingTile.hasDir(NORTH))
+                        trace("has north");
+                    if(floatingTile.hasDir(EAST))
+                        trace("has east");
+                    if(floatingTile.hasDir(SOUTH))
+                        trace("has south");
+                    if(floatingTile.hasDir(WEST))
+                        trace("has west");
                     break;
                 case 90:
                     // z
                     floatingTile.rotateAnticlockwise();
+                    if(floatingTile.hasDir(NORTH))
+                        trace("has north");
+                    if(floatingTile.hasDir(EAST))
+                        trace("has east");
+                    if(floatingTile.hasDir(SOUTH))
+                        trace("has south");
+                    if(floatingTile.hasDir(WEST))
+                        trace("has west");
                     break;
                 default:
                     break;

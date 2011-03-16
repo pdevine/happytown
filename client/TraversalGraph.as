@@ -1,34 +1,35 @@
 package
 {
-    import flash.display.Sprite;
     import flash.utils.Dictionary;
 
-    public class Test2 extends Sprite
+    public class TraversalGraph
     {
         private var graph:Dictionary;
-        public function Test2()
+
+        public function TraversalGraph()
         {
             graph = new Dictionary();
 
-            graph['n1'] = ['n2', 'n4'];
-            graph['n2'] = ['n1', 'n3'];
-            graph['n3'] = ['n2', 'n6'];
-            graph['n4'] = ['n1'];
-            graph['n5'] = ['n6', 'n8'];
-            graph['n6'] = ['n3', 'n5', 'n9'];
-            graph['n7'] = ['n8'];
-            graph['n8'] = ['n7', 'n5', 'n9'];
-            graph['n9'] = ['n6', 'n8'];
-
-            trace(graph);
-            var p:Array = findPath(graph, 'n1', 'n7', []);
-            trace("shortest path:", p);
+            //trace(graph);
+            //var p:Array = findPath(graph, 'n1', 'n7', []);
+            //trace("shortest path:", p);
         }
 
-        public function findPath(graph:Dictionary,
-                                 start:String,
-                                 end:String,
-                                 path:Array):Array
+        public function addVertex(v:Object):void
+        {
+            trace("added", v, " to graph");
+            graph[v] = [];
+        }
+
+        public function addEdge(v1:Object, v2:Object):void
+        {
+            trace("connected", v1, "to", v2);
+            graph[v1].push(v2);
+        }
+
+        public function findShortestPath(start:Object,
+                                         end:Object,
+                                         path:Array):Array
         {
             var newPath:Array;
             var existingPath:Array;
@@ -36,6 +37,8 @@ package
             // make a copy of the current path and add the starting location
             existingPath = path.slice(0)
             existingPath.push(start);
+            trace("findShortest:", start, end, path);
+            trace(graph);
 
             if(start == end) {
                 trace("found!", start);
@@ -68,7 +71,10 @@ package
                 if(! found)
                 {
 	                trace("searching for: ", nextNode);
-	                newPath = findPath(graph, nextNode, end, existingPath);
+	                newPath = findShortestPath(
+                        nextNode,
+                        end,
+                        existingPath);
 	                if(newPath.length > 0) {
 	                    trace("new path: ", newPath);
                         if(shortest.length == 0 ||

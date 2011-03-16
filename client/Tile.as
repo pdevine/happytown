@@ -91,12 +91,9 @@ package
 
             scale(scaleAmount);
 
-            targetRotation = rotation;
-            rotate(rotation);
-            
         }
 
-        public function init(triangles:Array):void
+        public function init(triangles:Array, rotation:Number):void
         {
             this.triangles = triangles;
             var i:uint;
@@ -104,6 +101,11 @@ package
             var light:Light = new Light();
             for(i = 0; i < triangles.length; i++)
                 triangles[i].light = light;
+
+            for(var x:int = 0; x < rotation / 90; x++)
+                rotateClockwise();
+
+            rotate(rotation);
 
         }
 
@@ -187,11 +189,34 @@ package
         public function rotateClockwise():void
         {
             targetRotation += 90;
+
+            // rotate the exits
+            exits = exits << 1;
+
+            // N = 1 E = 2 S = 4 W = 8
+            if(exits > 15)
+                exits -= 15;
         }
 
         public function rotateAnticlockwise():void
         {
             targetRotation -= 90;
+
+            trace("pre:", exits);
+
+            if(hasDir(Tiles.NORTH)) {
+                trace("add 15");
+                exits += 15;
+            }
+
+            exits = exits >> 1;
+            trace("post:", exits);
+
+        }
+
+        public function hasDir(direction:int):Boolean
+        {
+            return (exits & direction) > 0;
         }
 
         public function get height():Number

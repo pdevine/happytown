@@ -13,6 +13,8 @@ package
         {
             super(rotation, scaleAmount, vpX, vpY);
 
+            exits = Tiles.EAST | Tiles.SOUTH;
+
             triangles = [
                 new Triangle(points[7], points[28], points[26], 0x8cd19d),
                 new Triangle(points[7], points[26], points[6], 0x8cd19d),
@@ -82,10 +84,7 @@ package
 
             ];
 
-            init(triangles);
-
-            exits = Tiles.EAST | Tiles.SOUTH;
-
+            init(triangles, rotation);
         }
     }
 }
