@@ -60,6 +60,7 @@ package
             {
                 if(event.domain == "overlay")
                 {
+                    tiles.quit();
                     removeChild(tiles);
                     addChild(title);
                     tiles = new Tiles();

@@ -39,6 +39,7 @@ package
         private var dm:DataManager;
         private var overlayMenu:OverlayMenu;
 
+        private var xmlLoader:URLLoader;
         public var players:Array;
 
         //public var followMouse:Boolean = true;
@@ -102,7 +103,7 @@ package
         public function loadLevel(levelName:String):void
         {
             trace("loading level");
-            var xmlLoader:URLLoader = new URLLoader();
+            xmlLoader = new URLLoader();
             xmlLoader.load(new URLRequest(levelName));
             xmlLoader.addEventListener(Event.COMPLETE, levelLoaded);
         }
@@ -156,6 +157,7 @@ package
             stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
             stage.addEventListener(MovingTilesEvent.CONTROL_TYPE,
                                    onMovingTiles);
+            xmlLoader.removeEventListener(Event.COMPLETE, levelLoaded);
         }
 
         private function createTile(tileType:String,
@@ -384,6 +386,7 @@ package
             vpX = stage.stageWidth / 2;
             vpY = stage.stageHeight / 2;
 
+            this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
             stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
         }
 
@@ -483,8 +486,20 @@ package
             }
         }
 
+        public function quit():void
+        {
+            // clean up any leftover stuff
+            stage.removeEventListener(
+                KeyboardEvent.KEY_DOWN,
+                onPauseMenuKeyDown);
+            stage.removeEventListener(
+                MenuItemEvent.CONTROL_TYPE,
+                onMenuItemEvent);
+        }
+
         private function resume():void
         {
+            trace("RESUME");
             stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
             stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
             stage.removeEventListener(

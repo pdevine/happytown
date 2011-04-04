@@ -82,6 +82,7 @@ package
         {
             resetSprite();
             trace("fired: ", textField.text);
+            removeHandlers();
             stage.dispatchEvent(new MenuItemEvent(
                                         textField.text,
                                         domain));
@@ -104,6 +105,15 @@ package
 
             this.removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
             this.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+        }
+
+        public function removeHandlers():void
+        {
+            this.removeEventListener(MouseEvent.MOUSE_OUT, onMouseOut);
+            this.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+            this.removeEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
+            this.removeEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
+            this.removeEventListener(MouseEvent.MOUSE_OUT, onMouseOverOut);
         }
 
     }
