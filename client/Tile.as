@@ -119,6 +119,8 @@ package
 
         public function moveTo(x:Number, y:Number, z:Number):void
         {
+            moving = true;
+
             targetX = x;
             targetY = y;
             targetZ = z;

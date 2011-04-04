@@ -42,15 +42,30 @@ package
 
         private function onMenuItemEvent(event:MenuItemEvent):void
         {
-            trace("!!! menu item");
+            trace("!!! menu item - HappyTown.as");
             if(event.command == "start")
             {
-                var dm:DataManager = DataManager.getInstance();
-                tiles.loadLevel(levels[dm.currentLevel - 1]);
-                removeChild(title);
-                addChild(tiles);
+                trace("domain = ", event.domain);
 
-                drawMode = TILES_MODE;
+                if(event.domain == "menu")
+                {
+                    var dm:DataManager = DataManager.getInstance();
+                    tiles.loadLevel(levels[dm.currentLevel - 1]);
+                    removeChild(title);
+                    addChild(tiles);
+
+                    drawMode = TILES_MODE;
+                }
+            } else if(event.command == "quit")
+            {
+                if(event.domain == "overlay")
+                {
+                    removeChild(tiles);
+                    addChild(title);
+                    tiles = new Tiles();
+
+                    drawMode = TITLE_MODE;
+                }
             }
         }
     }

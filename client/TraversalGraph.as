@@ -42,6 +42,7 @@ package
 
             if(start == end) {
                 trace("found!", start);
+                path.push(end);
                 return path;
             }
 

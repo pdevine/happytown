@@ -6,6 +6,8 @@ package
         private static var allowInstantiation:Boolean;
 
         public var currentLevel:uint = 1;
+        public var pushedTile:Boolean = false;
+        public var floatingTilePosition:Point3D;
 
         public static function getInstance():DataManager
         {

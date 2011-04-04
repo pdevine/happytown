@@ -15,9 +15,13 @@ package
 
         public var totalLevels:int = 0;
 
-        public function LevelSelect(x:Number, y:Number, levels:int=5)
+        public function LevelSelect(
+                            domain:String,
+                            x:Number,
+                            y:Number,
+                            levels:int=5)
         {
-            super("level", x, y, false);
+            super("level", domain, x, y, false);
 
             totalLevels = levels;
 

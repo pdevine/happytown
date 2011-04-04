@@ -12,14 +12,14 @@ package
             menu = new Array();
 
             var menuItem:MenuItem;
-            menuItem = new MenuItem("start", 40, 200);
+            menuItem = new MenuItem("start", "menu", 40, 200);
             display.addChild(menuItem);
             menu.push(menuItem);
 
-            var levelSelect:LevelSelect = new LevelSelect(40, 250);
+            var levelSelect:LevelSelect = new LevelSelect("menu", 40, 250);
             display.addChild(levelSelect);
 
-            menuItem = new MenuItem("quit", 40, 300);
+            menuItem = new MenuItem("quit", "menu", 40, 300);
             display.addChild(menuItem);
             menu.push(menuItem);
 

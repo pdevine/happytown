@@ -19,10 +19,16 @@ package
 
         public var format:TextFormat;
         public var textField:TextField;
+        public var domain:String;
 
-        public function MenuItem(text:String, x:Number, y:Number,
-                                 clickable:Boolean=true)
+        public function MenuItem(
+                            text:String,
+                            domain:String,
+                            x:Number,
+                            y:Number,
+                            clickable:Boolean=true)
         {
+            this.domain = domain;
             this.x = x;
             this.y = y;
 
@@ -76,7 +82,9 @@ package
         {
             resetSprite();
             trace("fired: ", textField.text);
-            stage.dispatchEvent(new MenuItemEvent(textField.text));
+            stage.dispatchEvent(new MenuItemEvent(
+                                        textField.text,
+                                        domain));
         }
 
         private function onMouseOver(event:MouseEvent):void
@@ -98,6 +106,5 @@ package
             this.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
         }
 
-        
     }
 }

@@ -10,6 +10,7 @@ package
     import flash.utils.Dictionary;
 
     import MovingTilesEvent;
+    import MenuItemEvent;
 
     public class Tiles extends Sprite
     {
@@ -17,6 +18,8 @@ package
         public static const EAST:uint = 2;
         public static const SOUTH:uint = 4;
         public static const WEST:uint = 8;
+
+        public var paused:Boolean = false;
 
         private var tiles:Array;
         private var movingTiles:Array;
@@ -33,12 +36,19 @@ package
         private var rowPositions:Array;
         private var columnPositions:Array;
 
-        public var followMouse:Boolean = true;
+        private var dm:DataManager;
+        private var overlayMenu:OverlayMenu;
+
+        public var players:Array;
+
+        //public var followMouse:Boolean = true;
 
         public function Tiles()
         {
             tiles = new Array();
+            players = new Array();
             movingTiles = new Array();
+            dm = DataManager.getInstance();
 
             trace("added stage event listener");
             this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
@@ -130,6 +140,19 @@ package
                                       0, scaling, vpX, vpY);
             fixTilePositions();
 
+            var floatingTileX:int = int(tileData.floating_tile[0].@x);
+            var floatingTileY:int = int(tileData.floating_tile[0].@y);
+
+            dm.floatingTilePosition = new Point3D(
+                floatingTileX, floatingTileY, 0);
+
+            var player1:ExtrudedA = new ExtrudedA(vpX, vpY);
+            player1.scale(0.15);
+            player1.x = tiles[0][0].x;
+            player1.y = tiles[0][0].y;
+            player1.z = 20;
+            players.push(player1);
+
             stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
             stage.addEventListener(MovingTilesEvent.CONTROL_TYPE,
                                    onMovingTiles);
@@ -165,25 +188,12 @@ package
 
             for(row = 0; row < tiles.length; row++)
                 for(column = 0; column < tiles[row].length; column++)
-                {
                     g.addVertex(row * columns + column);
-                    var tile:Tile = tiles[row][column]
-                    if(tile.hasDir(NORTH))
-                        trace("has north");
-                    if(tile.hasDir(EAST))
-                        trace("has east");
-                    if(tile.hasDir(SOUTH))
-                        trace("has south");
-                    if(tile.hasDir(WEST))
-                        trace("has west");
-                }
 
             for(row = 0; row < tiles.length; row++)
             {
                 for(column = 0; column < tiles[row].length; column++)
                 {
-                    trace("row:", row, "col:", column);
-                    trace(column < columns-1);
                     if(column < columns-1 &&
                        tiles[row][column].hasDir(EAST) &&
                        tiles[row][column+1].hasDir(WEST))
@@ -214,9 +224,20 @@ package
             if(event.command == "finished")
             {
                 trace("move finished!");
-                followMouse = true;
-                floatingTile.moving = true;
+                //followMouse = true;
+                //floatingTile.moving = true;
+                returnFloatingTile();
             }
+        }
+
+        private function returnFloatingTile():void
+        {
+            trace("return tile x=", dm.floatingTilePosition.x,
+                  " y=", dm.floatingTilePosition.y);
+            floatingTile.moveTo(
+                dm.floatingTilePosition.x,
+                dm.floatingTilePosition.y,
+                0);
         }
 
         public function moveTiles(position:uint, direction:uint):void
@@ -231,8 +252,8 @@ package
             var width:uint = tiles[position].length;
             var height:uint = tiles.length;
 
-            trace("don't follow mouse");
-            followMouse = false;
+            //trace("don't follow mouse");
+            //followMouse = false;
 
             if(direction == WEST)
             {
@@ -321,6 +342,9 @@ package
                 tiles[height-1][position] = floatingTile;
                 floatingTile = newFloatingTile;
             }
+
+            if(floatingTile.moving)
+                dm.pushedTile = true;
         }
 
         public function draw():void
@@ -336,9 +360,14 @@ package
                 }
             }
 
+            for(var i:int = 0; i < players.length; i++)
+            {
+                players[i].draw(graphics);
+            }
+
             if(floatingTile != null)
             {
-                if(followMouse)
+                if(! dm.pushedTile && !paused)
                 {
                     floatingTile.x = getWorldX(mouseX);
                     floatingTile.y = getWorldY(mouseY);
@@ -373,20 +402,38 @@ package
             var column:int = getColumn(wx);
             trace("r, c:", row, column);
             trace("tiles len", tiles.length);
-            if(wx < 0 && column == -1 && row > 0 && row < rows) 
-                moveTiles(row, EAST);
-            else if(wx > 0 && column == -1 && row > 0 && row < rows) 
-                moveTiles(row, WEST);
-            else if(wy < 0 && row == -1 && column > 0 && column < columns) 
-                moveTiles(column, SOUTH);
-            else if(wy > 0 && row == -1 && column > 0 && column < columns) 
-                moveTiles(column, NORTH);
 
+            if(! dm.pushedTile)
+            {
+                if(wx < 0 && column == -1 && row > 0 && row < rows) 
+                    moveTiles(row, EAST);
+                else if(wx > 0 && column == -1 && row > 0 && row < rows) 
+                    moveTiles(row, WEST);
+                else if(wy < 0 && row == -1 && column > 0 && column < columns) 
+                    moveTiles(column, SOUTH);
+                else if(wy > 0 && row == -1 && column > 0 && column < columns) 
+                    moveTiles(column, NORTH);
+            }
             else if(column > -1 && row > -1)
             {
                 var g:TraversalGraph = getTileGraph();
-                var a:Array = g.findShortestPath(0, row * columns + column, []);
-                trace("path:", a);
+                var shortestPath:Array = g.findShortestPath(
+                    0,
+                    row * columns + column,
+                    []);
+
+                var tilePath:Array = new Array();
+
+                if(shortestPath.length > 0)
+                {
+                    trace("path:", shortestPath);
+                    for(var x:int = 0; x < shortestPath.length; x++)
+                    {
+                        var pos:int = shortestPath[x];
+                        tilePath.push(tiles[int(pos / rows)][pos % rows]);
+                    }
+                    trace(tilePath);
+                }
             }
 
         }
@@ -427,10 +474,59 @@ package
             return column;
         }
 
+        private function onMenuItemEvent(event:MenuItemEvent):void
+        {
+            trace("!!! menu item");
+            if(event.command == "resume")
+            {
+                resume();
+            }
+        }
+
+        private function resume():void
+        {
+            stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+            stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+            stage.removeEventListener(
+                KeyboardEvent.KEY_DOWN,
+                onPauseMenuKeyDown);
+            overlayMenu.removeOverlay();
+            paused = false;
+        }
+
+        private function pause():void
+        {
+            paused = true;
+            stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUp);
+            stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+            stage.addEventListener(KeyboardEvent.KEY_DOWN, onPauseMenuKeyDown);
+
+            returnFloatingTile();
+            overlayMenu = new OverlayMenu(this);
+            stage.addEventListener(
+                MenuItemEvent.CONTROL_TYPE,
+                onMenuItemEvent);
+        }
+
+        private function onPauseMenuKeyDown(event:KeyboardEvent):void
+        {
+            switch(event.keyCode)
+            {
+                case Keyboard.ESCAPE:
+                    resume();
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private function onKeyDown(event:KeyboardEvent):void
         {
             switch(event.keyCode)
             {
+                case Keyboard.ESCAPE:
+                    pause();
+                    break;
                 case Keyboard.RIGHT:
                     moveTiles(1, EAST);
                     break;
