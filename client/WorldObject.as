@@ -19,6 +19,11 @@ package
         public var targetY:Number = 0;
         public var targetZ:Number = 0;
 
+        public var rotation:Number = 0;
+        public var targetRotation:Number = 0;
+
+        public var moving:Boolean = false;
+
         public function WorldObject(vpX:Number, vpY:Number)
         {
             this.vpX = vpX;
@@ -78,6 +83,15 @@ package
                 points[i].scale(scaleFactor);
         }
 
+        public function moveTo(x:Number, y:Number, z:Number):void
+        {
+            moving = true;
+
+            targetX = x;
+            targetY = y;
+            targetZ = z;
+        }
+
         public function translate(x:Number, y:Number, z:Number):void
         {
             _x += x;
@@ -123,6 +137,65 @@ package
         {
             translate(0, 0, -_z + val);
         }
+
+        public function get width():Number
+        {
+            var start:Number = points[0].x;
+            var end:Number = points[0].x;
+
+            for(var i:uint = 0; i < points.length; i++)
+            {
+                start = Math.min(start, points[i].x);
+                end = Math.max(end, points[i].x);
+            }
+
+            return end - start;
+        }
+
+        public function get height():Number
+        {
+            var start:Number = points[0].y;
+            var end:Number = points[0].y;
+
+            // find first and last point
+            for(var i:uint = 0; i < points.length; i++)
+            {
+                start = Math.min(start, points[i].y);
+                end = Math.max(end, points[i].y);
+            }
+
+            return end - start;
+        }
+
+        public function rotate(angleZ:Number, center:Boolean=true):void
+        {
+            rotation += angleZ;
+
+            // convert to radians
+            angleZ = angleZ / 180 * Math.PI;
+
+            for(var i:uint = 0; i < points.length; i++)
+            {
+                var point:Point3D = points[i];
+                if(center)
+                {
+                    point.x -= _x;
+                    point.y -= _y;
+                    point.z -= _z;
+                }
+
+                point.rotateZ(angleZ);
+
+                if(center)
+                {
+                    point.x += _x;
+                    point.y += _y;
+                    point.z += _z;
+                }
+            }
+        }
+
+
 
     }
 }
