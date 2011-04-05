@@ -23,6 +23,7 @@ package
 
         private var tiles:Array;
         private var movingTiles:Array;
+        private var world:World;
 
         private var floatingTile:Tile;
 
@@ -50,6 +51,7 @@ package
             players = new Array();
             movingTiles = new Array();
             dm = DataManager.getInstance();
+            world = new World();
 
             trace("added stage event listener");
             this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
@@ -132,6 +134,7 @@ package
                     var rotation:Number = 
                         Number(tileData.row[r].tile[i].rotation);
                     tile = createTile(tileType, rotation, scaling, vpX, vpY);
+                    world.addObject(tile);
                     row.push(tile);
                 }
                 tiles.push(row);
@@ -139,20 +142,23 @@ package
 
             floatingTile = createTile(tileData.floating_tile[0].type,
                                       0, scaling, vpX, vpY);
+            world.addObject(floatingTile);
             fixTilePositions();
 
             var floatingTileX:int = int(tileData.floating_tile[0].@x);
             var floatingTileY:int = int(tileData.floating_tile[0].@y);
+            var floatingTileZ:int = int(tileData.floating_tile[0].@z);
 
             dm.floatingTilePosition = new Point3D(
-                floatingTileX, floatingTileY, 0);
+                floatingTileX, floatingTileY, floatingTileZ);
 
             var player1:ExtrudedA = new ExtrudedA(vpX, vpY);
             player1.scale(0.15);
             player1.x = tiles[0][0].x;
             player1.y = tiles[0][0].y;
-            player1.z = 20;
+            player1.z = -20;
             players.push(player1);
+            world.addObject(player1);
 
             stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
             stage.addEventListener(MovingTilesEvent.CONTROL_TYPE,
@@ -239,7 +245,7 @@ package
             floatingTile.moveTo(
                 dm.floatingTilePosition.x,
                 dm.floatingTilePosition.y,
-                0);
+                dm.floatingTilePosition.z);
         }
 
         public function moveTiles(position:uint, direction:uint):void
@@ -253,6 +259,8 @@ package
             var newFloatingTile:Tile;
             var width:uint = tiles[position].length;
             var height:uint = tiles.length;
+
+            floatingTile.z = 0;
 
             //trace("don't follow mouse");
             //followMouse = false;
@@ -353,18 +361,18 @@ package
         {
 
             graphics.clear();
-            // sort objects here
             for(var row:uint = 0; row < tiles.length; row++)
             {
                 for(var column:uint = 0; column < tiles[row].length; column++)
                 {
-                    tiles[row][column].draw(stage, graphics);
+                    tiles[row][column].update(stage);
                 }
             }
+            world.draw(graphics);
 
             for(var i:int = 0; i < players.length; i++)
             {
-                players[i].draw(graphics);
+                players[i].update();
             }
 
             if(floatingTile != null)
@@ -373,10 +381,10 @@ package
                 {
                     floatingTile.x = getWorldX(mouseX);
                     floatingTile.y = getWorldY(mouseY);
-                    floatingTile.z = 0;
+                    floatingTile.z = dm.floatingTilePosition.z;
                 }
 
-                floatingTile.draw(stage, graphics);
+                floatingTile.update(stage);
             }
         }
 

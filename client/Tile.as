@@ -6,7 +6,7 @@ package
     public class Tile
     {
         public var points:Array;
-        private var triangles:Array;
+        public var triangles:Array;
         private var fl:Number = 250;
         private var vpX:Number;
         private var vpY:Number;
@@ -264,7 +264,7 @@ package
             }
         }
 
-        public function draw(stage:Stage, g:Graphics):void
+        public function update(stage:Stage):void
         {
             if(moving)
             {
@@ -293,10 +293,6 @@ package
                 rotate((targetRotation - rotation) * rotationSpeed);
             }
 
-            triangles.sortOn("depth", Array.DESCENDING | Array.NUMERIC);
-
-            for(var i:uint = 0; i < triangles.length; i++)
-                triangles[i].draw(g);
         }
     }
 }

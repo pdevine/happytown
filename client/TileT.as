@@ -5,7 +5,7 @@ package
     public class TileT extends Tile
     {
 
-        private var triangles:Array;
+        //private var triangles:Array;
 
         public function TileT(rotation:Number,
                               scaleAmount:Number,

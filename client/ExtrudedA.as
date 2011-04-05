@@ -6,7 +6,7 @@ package
     public class ExtrudedA
     {
         private var points:Array;
-        private var triangles:Array;
+        public var triangles:Array;
         private var fl:Number = 250;
         private var vpX:Number;
         private var vpY:Number;
@@ -169,7 +169,7 @@ package
             translate(0, 0, -_z + val);
         }
 
-        public function draw(g:Graphics):void
+        public function update():void
         {
             var i:int;
             var angleX:Number = 0.01;
@@ -191,13 +191,13 @@ package
 
             }
 
-            triangles.sortOn("depth", Array.DESCENDING | Array.NUMERIC);
+            //triangles.sortOn("depth", Array.DESCENDING | Array.NUMERIC);
 
             //g.clear();
-            for(i = 0; i < triangles.length; i++)
-            {
-                triangles[i].draw(g);
-            }
+            //for(i = 0; i < triangles.length; i++)
+            //{
+            //    triangles[i].draw(g);
+            //}
         }
     }
 }
