@@ -1,164 +1,75 @@
 package
 {
     import flash.display.Graphics;
-    import flash.events.Event;
 
-    public class Bus
+    public class Bus extends WorldObject
     {
-        private var points:Array;
-        public var triangles:Array;
-        private var fl:Number = 250;
-        private var vpX:Number;
-        private var vpY:Number;
 
-        private var _x:Number = 0;
-        private var _y:Number = 0;
-        private var _z:Number = 0;
+        private const objectPoints:Array = [
+            -160, -50,   -5,
+            -160, -50, -105,
+              80, -50, -105,
+              80, -50,   -5,
+              80, -50,  -45,
+             160, -50,  -45,
+             160, -50,   -5,
 
-        public var targetX:Number = 0;
-        public var targetY:Number = 0;
-        public var targetZ:Number = 0;
+            // 7
+            -160,  50, -105,
+              80,  50, -105,
+              80,  50,  -45,
+             160,  50,  -45,
+             160,  50,   -5,
 
-        public function Bus(
-            vpX:Number,
-            vpY:Number)
-        {
-            this.vpX = vpX;
-            this.vpY = vpY;
-
-            init();
-        }
-
-        private function init():void
-        {
-            points = [
-                new Point3D(-160, -30,   -5),
-                new Point3D(-160, -30, -105),
-                new Point3D(  80, -30, -105),
-                new Point3D(  80, -30,   -5),
-                new Point3D(  80, -30,  -45),
-                new Point3D( 160, -30,  -45),
-                new Point3D( 160, -30,   -5),
-
-                // 7
-                new Point3D(-160,  30, -105),
-                new Point3D(  80,  30, -105),
-                new Point3D(  80,  30,  -45),
-                new Point3D( 160,  30,  -45),
-                new Point3D( 160,  30,   -5),
-
-                // 12
-                new Point3D(-160,  30,   -5),
-                new Point3D(-160,  30, -105),
-                new Point3D(  80,  30, -105),
-                new Point3D(  80,  30,   -5),
-                new Point3D(  80,  30,  -45),
-                new Point3D( 160,  30,  -45),
-                new Point3D( 160,  30,   -5),
-
-
+            // 12
+            -160,  50,   -5,
+            -160,  50, -105,
+              80,  50, -105,
+              80,  50,   -5,
+              80,  50,  -45,
+             160,  50,  -45,
+             160,  50,   -5,
             ];
 
-            for(var i:uint = 0; i < points.length; i++)
-            {
-                points[i].setVanishingPoint(vpX, vpY);
-                points[i].setCenter(0, 0, 200);
-            }
+        private const objectTriangles:Array = [
+            // side
+            0, 2, 1, 0xf7e033,
+            0, 3, 2, 0xf7e033,
+            3, 5, 4, 0xf7e033,
+            3, 6, 5, 0xf7e033,
 
-            triangles = [
-                // side
-                new Triangle(points[0], points[2], points[1], 0xf7e033),
-                new Triangle(points[0], points[3], points[2], 0xf7e033),
-                new Triangle(points[3], points[5], points[4], 0xf7e033),
-                new Triangle(points[3], points[6], points[5], 0xf7e033),
+            //top
+            1, 2, 7, 0xf7e033,
+            7, 2, 8, 0xf7e033,
 
-                //top
-                new Triangle(points[1], points[2], points[7], 0xf7e033),
-                new Triangle(points[7], points[2], points[8], 0xf7e033),
+            //windshield
+            4, 8, 2, 0xf7e033,
+            4, 9, 8, 0xf7e033,
 
-                //windshield
-                new Triangle(points[4], points[8], points[2], 0xf7e033),
-                new Triangle(points[4], points[9], points[8], 0xf7e033),
+            //hood
+            4, 10, 9, 0xf7e033,
+            4, 5, 10, 0xf7e033,
 
-                //hood
-                new Triangle(points[4], points[10], points[9], 0xf7e033),
-                new Triangle(points[4], points[5], points[10], 0xf7e033),
+            //grill
+            6, 10, 5, 0xf7e033,
+            6, 11, 10, 0xf7e033,
 
-                //grill
-                new Triangle(points[6], points[10], points[5], 0xf7e033),
-                new Triangle(points[6], points[11], points[10], 0xf7e033),
+            //other side
+            12, 13, 14, 0xf7e033,
+            12, 14, 15, 0xf7e033,
+            15, 16, 17, 0xf7e033,
+            15, 17, 18, 0xf7e033,
 
-                //other side
-                new Triangle(points[12], points[13], points[14], 0xf7e033),
-                new Triangle(points[12], points[14], points[15], 0xf7e033),
-                new Triangle(points[15], points[16], points[17], 0xf7e033),
-                new Triangle(points[15], points[17], points[18], 0xf7e033),
+            //back
+            0, 1, 13, 0xf7e033,
+            0, 13, 12, 0xf7e033,
 
-                //back
-                new Triangle(points[0], points[13], points[14], 0xf7e033),
-                new Triangle(points[12], points[14], points[15], 0xf7e033),
+        ];
 
-            ];
-
-            var light:Light = new Light();
-            for(i = 0; i < triangles.length; i++)
-            {
-                triangles[i].light = light;
-            }
-
-            //addEventListener(Event.ENTER_FRAME, onEnterFrame);
-        }
-
-        public function scale(scaleFactor:Number):void
+        public function Bus(vpX:Number, vpY:Number)
         {
-            for(var i:int = 0; i < points.length; i++)
-            {
-                points[i].scale(scaleFactor);
-            }
-        }
-
-        public function translate(x:Number, y:Number, z:Number):void
-        {
-            _x += x;
-            _y += y;
-            _z += z;
-
-            for(var i:int = 0; i < points.length; i++)
-            {
-                points[i].x += x;
-                points[i].y += y;
-                points[i].z += z;
-            }
-        }
-
-        public function get x():Number
-        {
-            return _x;
-        }
-
-        public function set x(val:Number):void
-        {
-            translate(-_x + val, 0, 0);
-        }
-
-        public function get y():Number
-        {
-            return _y;
-        }
-
-        public function set y(val:Number):void
-        {
-            translate(0, -_y + val, 0);
-        }
-
-        public function get z():Number
-        {
-            return _z;
-        }
-
-        public function set z(val:Number):void
-        {
-            translate(0, 0, -_z + val);
+            super(vpX, vpY);
+            setData(objectPoints, objectTriangles);
         }
 
         public function update():void
@@ -166,6 +77,9 @@ package
             var i:int;
             var angleX:Number = 0.01;
             var angleY:Number = 0.01;
+            //var angleX:Number = 0.0;
+            //var angleY:Number = 0.0;
+
 
             for(i = 0; i < points.length; i++)
             {
@@ -182,14 +96,7 @@ package
                 point.z += _z;
 
             }
-
-            //triangles.sortOn("depth", Array.DESCENDING | Array.NUMERIC);
-
-            //g.clear();
-            //for(i = 0; i < triangles.length; i++)
-            //{
-            //    triangles[i].draw(g);
-            //}
         }
+
     }
 }
