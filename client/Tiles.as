@@ -152,11 +152,12 @@ package
             dm.floatingTilePosition = new Point3D(
                 floatingTileX, floatingTileY, floatingTileZ);
 
-            var player1:ExtrudedA = new ExtrudedA(vpX, vpY);
-            player1.scale(0.15);
+            //var player1:ExtrudedA = new ExtrudedA(vpX, vpY);
+            var player1:Bus = new Bus(vpX, vpY);
+            player1.scale(scaling);
             player1.x = tiles[0][0].x;
             player1.y = tiles[0][0].y;
-            player1.z = -20;
+            player1.z = 0;
             players.push(player1);
             world.addObject(player1);
 
