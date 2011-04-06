@@ -56,6 +56,9 @@ package
         private const moveSpeed:Number = 0.1;
         private const rotationSpeed:Number = 0.1;
 
+        // where to send any objects on the tile if they get separated
+        public var nextTileForObjects:Tile;
+
         public function Tile(vpX:Number, vpY:Number)
         {
             super(vpX, vpY);

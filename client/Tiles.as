@@ -173,10 +173,8 @@ package
 
             var player1:Bus = new Bus(vpX, vpY);
             player1.scale(scaling);
-            player1.x = tiles[0][0].x;
-            player1.y = tiles[0][0].y;
             player1.z = 0;
-            player1.tilePosition = tiles[0][0];
+            player1.tilePosition = tiles[0][1];
             players.push(player1);
             world.addObject(player1);
 
@@ -228,6 +226,20 @@ package
                 dm.floatingTilePosition.x,
                 dm.floatingTilePosition.y,
                 dm.floatingTilePosition.z);
+
+            // XXX - move objects and players instead of teleporting them
+
+            for(var i:int = 0; i < objects.length; i++)
+            {
+                if(objects[i].tilePosition == floatingTile)
+                    objects[i].tilePosition = floatingTile.nextTileForObjects;
+            }
+
+            for(i = 0; i < players.length; i++)
+            {
+                if(players[i].tilePosition == floatingTile)
+                    players[i].tilePosition = floatingTile.nextTileForObjects;
+            }
         }
 
         private function moveObjectsAndPlayersOnTile(tile:Tile):void
@@ -296,6 +308,7 @@ package
                 }
                 tiles[position][width-1] = floatingTile;
                 floatingTile = newFloatingTile;
+                floatingTile.nextTileForObjects = tiles[position][width-1];
             }
             else if(direction == EAST)
             {
@@ -319,6 +332,7 @@ package
 
                 tiles[position][0] = floatingTile;
                 floatingTile = newFloatingTile;
+                floatingTile.nextTileForObjects = tiles[position][0];
             }
             else if(direction == SOUTH)
             {
@@ -340,6 +354,7 @@ package
 
                 tiles[0][position] = floatingTile;
                 floatingTile = newFloatingTile;
+                floatingTile.nextTileForObjects = tiles[0][position];
             }
             else if(direction == NORTH)
             {
@@ -361,6 +376,7 @@ package
                 }
                 tiles[height-1][position] = floatingTile;
                 floatingTile = newFloatingTile;
+                floatingTile.nextTileForObjects = tiles[height-1][position];
             }
 
             if(floatingTile.moving)
@@ -390,6 +406,8 @@ package
 
             if(floatingTile != null)
             {
+                moveObjectsAndPlayersOnTile(floatingTile);
+
                 if(! dm.pushedTile && !paused)
                 {
                     floatingTile.x = getWorldX(mouseX);
