@@ -27,7 +27,7 @@ package
               80,  50,  -45,
              160,  50,  -45,
              160,  50,   -5,
-            ];
+        ];
 
         private const objectTriangles:Array = [
             // side

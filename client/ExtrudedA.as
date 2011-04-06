@@ -3,170 +3,86 @@ package
     import flash.display.Graphics;
     import flash.events.Event;
 
-    public class ExtrudedA
+    public class ExtrudedA extends Actor
     {
-        private var points:Array;
-        public var triangles:Array;
-        private var fl:Number = 250;
-        private var vpX:Number;
-        private var vpY:Number;
+        private const objectPoints:Array = [
+             -50, -250, -50,
+              50, -250, -50,
+             200,  250, -50,
+             100,  250, -50,
+              50,  100, -50,
+             -50,  100, -50,
+            -100,  250, -50,
+            -200,  250, -50,
+               0, -150, -50,
+              50,    0, -50,
+             -50,    0, -50,
 
-        private var _x:Number = 0;
-        private var _y:Number = 0;
-        private var _z:Number = 0;
+             -50, -250,  50,
+              50, -250,  50,
+             200,  250,  50,
+             100,  250,  50,
+              50,  100,  50,
+             -50,  100,  50,
+            -100,  250,  50,
+            -200,  250,  50,
+               0, -150,  50,
+              50,    0,  50,
+             -50,    0,  50
+        ];
 
-        public var targetX:Number = 0;
-        public var targetY:Number = 0;
-        public var targetZ:Number = 0;
+        private const objectTriangles:Array = [
+            0, 1, 8, 0xcccccc,
+            1, 9, 8, 0xcccccc,
+            1, 2, 9, 0xcccccc,
+            2, 4, 9, 0xcccccc,
+            2, 3, 4, 0xcccccc,
+            4, 5, 9, 0xcccccc,
+            9, 5, 10, 0xcccccc,
+            5, 6, 7, 0xcccccc,
+            5, 7, 10, 0xcccccc,
+            0, 10, 7, 0xcccccc,
+            0, 8, 10, 0xcccccc,
+            11, 19, 12, 0xcccccc,
+            12, 19, 20, 0xcccccc,
+            12, 20, 13, 0xcccccc,
+            13, 20, 15, 0xcccccc,
+            13, 15, 14, 0xcccccc,
+            15, 20, 16, 0xcccccc,
+            20, 21, 16, 0xcccccc,
+            16, 18, 17, 0xcccccc,
+            16, 21, 18, 0xcccccc,
+            11, 18, 21, 0xcccccc,
+            11, 21, 19, 0xcccccc,
+            0, 11, 1, 0xcccccc,
+            11, 12, 1, 0xcccccc,
+            1, 12, 2, 0xcccccc,
+            12, 13, 2, 0xcccccc,
+            3, 2, 14, 0xcccccc,
+            2, 13, 14, 0xcccccc,
+            4, 3, 15, 0xcccccc,
+            3, 14, 15, 0xcccccc,
+            5, 4, 16, 0xcccccc,
+            4, 15, 16, 0xcccccc,
+            6, 5, 17, 0xcccccc,
+            5, 16, 17, 0xcccccc,
+            7, 6, 18, 0xcccccc,
+            6, 17, 18, 0xcccccc,
+            0, 7, 11, 0xcccccc,
+            7, 18, 11, 0xcccccc,
+            8, 9, 19, 0xcccccc,
+            9, 20, 19, 0xcccccc,
+            9, 10, 20, 0xcccccc,
+            10, 21, 20, 0xcccccc,
+            10, 8, 21, 0xcccccc,
+            8, 19, 21, 0xcccccc
+        ];
 
-        public function ExtrudedA(
-            vpX:Number,
-            vpY:Number)
+        public function ExtrudedA(vpX:Number, vpY:Number)
         {
-            this.vpX = vpX;
-            this.vpY = vpY;
+            super(vpX, vpY);
 
-            init();
-        }
-
-        private function init():void
-        {
-            points = [
-                new Point3D( -50, -250, -50),
-                new Point3D(  50, -250, -50),
-                new Point3D( 200,  250, -50),
-                new Point3D( 100,  250, -50),
-                new Point3D(  50,  100, -50),
-                new Point3D( -50,  100, -50),
-                new Point3D(-100,  250, -50),
-                new Point3D(-200,  250, -50),
-                new Point3D(   0, -150, -50),
-                new Point3D(  50,    0, -50),
-                new Point3D( -50,    0, -50),
-
-                new Point3D( -50, -250,  50),
-                new Point3D(  50, -250,  50),
-                new Point3D( 200,  250,  50),
-                new Point3D( 100,  250,  50),
-                new Point3D(  50,  100,  50),
-                new Point3D( -50,  100,  50),
-                new Point3D(-100,  250,  50),
-                new Point3D(-200,  250,  50),
-                new Point3D(   0, -150,  50),
-                new Point3D(  50,    0,  50),
-                new Point3D( -50,    0,  50)];
-
-            for(var i:uint = 0; i < points.length; i++)
-            {
-                points[i].setVanishingPoint(vpX, vpY);
-                points[i].setCenter(0, 0, 200);
-            }
-
-            triangles = [
-                new Triangle(points[0], points[1], points[8], 0xcccccc),
-                new Triangle(points[1], points[9], points[8], 0xcccccc),
-                new Triangle(points[1], points[2], points[9], 0xcccccc),
-                new Triangle(points[2], points[4], points[9], 0xcccccc),
-                new Triangle(points[2], points[3], points[4], 0xcccccc),
-                new Triangle(points[4], points[5], points[9], 0xcccccc),
-                new Triangle(points[9], points[5], points[10], 0xcccccc),
-                new Triangle(points[5], points[6], points[7], 0xcccccc),
-                new Triangle(points[5], points[7], points[10], 0xcccccc),
-                new Triangle(points[0], points[10], points[7], 0xcccccc),
-                new Triangle(points[0], points[8], points[10], 0xcccccc),
-                new Triangle(points[11], points[19], points[12], 0xcccccc),
-                new Triangle(points[12], points[19], points[20], 0xcccccc),
-                new Triangle(points[12], points[20], points[13], 0xcccccc),
-                new Triangle(points[13], points[20], points[15], 0xcccccc),
-                new Triangle(points[13], points[15], points[14], 0xcccccc),
-                new Triangle(points[15], points[20], points[16], 0xcccccc),
-                new Triangle(points[20], points[21], points[16], 0xcccccc),
-                new Triangle(points[16], points[18], points[17], 0xcccccc),
-                new Triangle(points[16], points[21], points[18], 0xcccccc),
-                new Triangle(points[11], points[18], points[21], 0xcccccc),
-                new Triangle(points[11], points[21], points[19], 0xcccccc),
-                new Triangle(points[0], points[11], points[1], 0xcccccc),
-                new Triangle(points[11], points[12], points[1], 0xcccccc),
-                new Triangle(points[1], points[12], points[2], 0xcccccc),
-                new Triangle(points[12], points[13], points[2], 0xcccccc),
-                new Triangle(points[3], points[2], points[14], 0xcccccc),
-                new Triangle(points[2], points[13], points[14], 0xcccccc),
-                new Triangle(points[4], points[3], points[15], 0xcccccc),
-                new Triangle(points[3], points[14], points[15], 0xcccccc),
-                new Triangle(points[5], points[4], points[16], 0xcccccc),
-                new Triangle(points[4], points[15], points[16], 0xcccccc),
-                new Triangle(points[6], points[5], points[17], 0xcccccc),
-                new Triangle(points[5], points[16], points[17], 0xcccccc),
-                new Triangle(points[7], points[6], points[18], 0xcccccc),
-                new Triangle(points[6], points[17], points[18], 0xcccccc),
-                new Triangle(points[0], points[7], points[11], 0xcccccc),
-                new Triangle(points[7], points[18], points[11], 0xcccccc),
-                new Triangle(points[8], points[9], points[19], 0xcccccc),
-                new Triangle(points[9], points[20], points[19], 0xcccccc),
-                new Triangle(points[9], points[10], points[20], 0xcccccc),
-                new Triangle(points[10], points[21], points[20], 0xcccccc),
-                new Triangle(points[10], points[8], points[21], 0xcccccc),
-                new Triangle(points[8], points[19], points[21], 0xcccccc)];
-
-            var light:Light = new Light();
-            for(i = 0; i < triangles.length; i++)
-            {
-                triangles[i].light = light;
-            }
-
-            //addEventListener(Event.ENTER_FRAME, onEnterFrame);
-        }
-
-        public function scale(scaleFactor:Number):void
-        {
-            for(var i:int = 0; i < points.length; i++)
-            {
-                points[i].scale(scaleFactor);
-            }
-        }
-
-        public function translate(x:Number, y:Number, z:Number):void
-        {
-            _x += x;
-            _y += y;
-            _z += z;
-
-            for(var i:int = 0; i < points.length; i++)
-            {
-                points[i].x += x;
-                points[i].y += y;
-                points[i].z += z;
-            }
-        }
-
-        public function get x():Number
-        {
-            return _x;
-        }
-
-        public function set x(val:Number):void
-        {
-            translate(-_x + val, 0, 0);
-        }
-
-        public function get y():Number
-        {
-            return _y;
-        }
-
-        public function set y(val:Number):void
-        {
-            translate(0, -_y + val, 0);
-        }
-
-        public function get z():Number
-        {
-            return _z;
-        }
-
-        public function set z(val:Number):void
-        {
-            translate(0, 0, -_z + val);
+            setData(objectPoints, objectTriangles);
         }
 
         public function update():void
@@ -190,14 +106,6 @@ package
                 point.z += _z;
 
             }
-
-            //triangles.sortOn("depth", Array.DESCENDING | Array.NUMERIC);
-
-            //g.clear();
-            //for(i = 0; i < triangles.length; i++)
-            //{
-            //    triangles[i].draw(g);
-            //}
         }
     }
 }

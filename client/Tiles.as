@@ -40,6 +40,7 @@ package
 
         private var xmlLoader:URLLoader;
         public var players:Array;
+        public var objects:Array;
 
         //public var followMouse:Boolean = true;
 
@@ -47,6 +48,7 @@ package
         {
             tiles = new Array();
             players = new Array();
+            objects = new Array();
             movingTiles = new Array();
             dm = DataManager.getInstance();
             world = new World();
@@ -149,6 +151,15 @@ package
 
             dm.floatingTilePosition = new Point3D(
                 floatingTileX, floatingTileY, floatingTileZ);
+
+            var object1:ExtrudedA = new ExtrudedA(vpX, vpY);
+            object1.scale(0.15);
+            object1.x = tiles[1][1].x;
+            object1.y = tiles[1][1].y;
+            object1.z = -40;
+            object1.tilePosition = 4;
+            objects.push(object1);
+            world.addObject(object1);
 
             //var player1:ExtrudedA = new ExtrudedA(vpX, vpY);
             var player1:Bus = new Bus(vpX, vpY);
@@ -326,9 +337,10 @@ package
             world.draw(graphics);
 
             for(var i:int = 0; i < players.length; i++)
-            {
                 players[i].update();
-            }
+
+            for(i = 0; i < objects.length; i++)
+                objects[i].update();
 
             if(floatingTile != null)
             {
