@@ -27,6 +27,7 @@
     <tile>
         <type>tile_t</type>
         <rotation>0</rotation>
+        <object>a</object>
     </tile>
   </row>
   <row>

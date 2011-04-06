@@ -6,6 +6,7 @@ package
         private static var allowInstantiation:Boolean;
 
         public var currentLevel:uint = 1;
+        public var currentPlayer:int = 0;
         public var pushedTile:Boolean = false;
         public var floatingTilePosition:Point3D;
         public var columns:uint = 0;

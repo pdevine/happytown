@@ -115,13 +115,16 @@ package
             trace("xml loaded");
             var tile:Tile;
             var row:Array;
+            var worldObject:WorldObject;
 
+            // setup XML parser
             XML.ignoreWhitespace = true;
             var tileData:XML = new XML(event.target.data);
+
+            // set world parameters
             var scaling:Number = Number(tileData.@scaling);
             dm.rows = uint(tileData.@rows);
             dm.columns = uint(tileData.@columns);
-            trace("scaling: ", tileData.@scaling);
 
             for(var r:uint = 0; r < tileData.row.length(); r++)
             {
@@ -129,11 +132,27 @@ package
                 row = new Array();
                 for(var i:uint = 0; i < tileData.row[r].tile.length(); i++)
                 {
+                    worldObject = null;
+
+                    // set up tile
                     trace("tile");
                     var tileType:String = tileData.row[r].tile[i].type;
                     var rotation:Number = 
                         Number(tileData.row[r].tile[i].rotation);
+                    var objectType:String = tileData.row[r].tile[i].object;
                     tile = createTile(tileType, rotation, scaling, vpX, vpY);
+
+                    // add any objects if we've found them
+                    trace("object = ", objectType);
+                    if(objectType)
+                    {
+                        worldObject = createObject(objectType);
+                        worldObject.x = tile.x;
+                        worldObject.y = tile.y;
+                        worldObject.tilePosition = tile;
+                        world.addObject(worldObject);
+                        objects.push(worldObject);
+                    }
                     world.addObject(tile);
                     row.push(tile);
                 }
@@ -152,22 +171,12 @@ package
             dm.floatingTilePosition = new Point3D(
                 floatingTileX, floatingTileY, floatingTileZ);
 
-            var object1:ExtrudedA = new ExtrudedA(vpX, vpY);
-            object1.scale(0.15);
-            object1.x = tiles[1][1].x;
-            object1.y = tiles[1][1].y;
-            object1.z = -40;
-            object1.tilePosition = 4;
-            objects.push(object1);
-            world.addObject(object1);
-
-            //var player1:ExtrudedA = new ExtrudedA(vpX, vpY);
             var player1:Bus = new Bus(vpX, vpY);
             player1.scale(scaling);
             player1.x = tiles[0][0].x;
             player1.y = tiles[0][0].y;
             player1.z = 0;
-            player1.tilePosition = 0;
+            player1.tilePosition = tiles[0][0];
             players.push(player1);
             world.addObject(player1);
 
@@ -175,6 +184,13 @@ package
             stage.addEventListener(MovingTilesEvent.CONTROL_TYPE,
                                    onMovingTiles);
             xmlLoader.removeEventListener(Event.COMPLETE, levelLoaded);
+        }
+
+        private function createObject(objectType:String):WorldObject
+        {
+            if(objectType == "a")
+                return(new ExtrudedA(vpX, vpY));
+            return null;
         }
 
         private function createTile(tileType:String,
@@ -399,10 +415,14 @@ package
                 var g:TraversalGraph = new TraversalGraph();
                 g.createTileGraph(tiles);
 
-                trace("player tilePosition =", players[0].tilePosition);
+                trace("player tilePosition =", 
+                    findTileIndexInTiles(
+                        players[dm.currentPlayer].tilePosition));
 
+                // tileIndex should always be good here
                 var shortestPath:Array = g.findShortestPath(
-                    players[0].tilePosition,
+                    findTileIndexInTiles(
+                        players[dm.currentPlayer].tilePosition),
                     row * dm.columns + column,
                     []);
 
@@ -417,14 +437,33 @@ package
                         tilePath.push(tiles[int(pos / dm.rows)][pos % dm.rows]);
                     }
                     trace(tilePath);
-                    players[0].move(tilePath);
-                    players[0].tilePosition = 
-                        shortestPath[shortestPath.length-1];
-                    trace("new tilePosition =", players[0].tilePosition);
+                    players[dm.currentPlayer].move(tilePath);
+                    players[dm.currentPlayer].tilePosition = 
+                        tilePath[tilePath.length-1];
+                    trace("new tilePosition =",
+                        findTileIndexInTiles(
+                            players[dm.currentPlayer].tilePosition));
 
                 }
             }
 
+        }
+
+        public function findTileIndexInTiles(tile:Tile):int
+        {
+            trace("looking for tile:", tile);
+            var i:int = 0;
+            for(var row:uint = 0; row < dm.rows; row++)
+            {
+                for(var column:uint = 0; column < dm.columns; column++)
+                {
+                    if(tile == tiles[row][column])
+                        return i;
+                    i++;
+                }
+            }
+    
+            return -1;
         }
 
         private function getRow(y:Number):int

@@ -24,6 +24,8 @@ package
 
         public var moving:Boolean = false;
 
+        public var tilePosition:Tile;
+
         public function WorldObject(vpX:Number, vpY:Number)
         {
             this.vpX = vpX;
@@ -98,7 +100,7 @@ package
             _y += y;
             _z += z;
 
-            trace("Moving object to = ", _x, _y, _z);
+            //trace("Moving object to = ", _x, _y, _z);
 
             for(var i:int = 0; i < points.length; i++)
             {
