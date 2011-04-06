@@ -140,5 +140,11 @@ package
             }
 
         }
+
+        public function draw(g:Graphics):void
+        {
+            for(var i:uint; i < triangles.length; i++)
+                triangles[i].draw(g);
+        }
     }
 }

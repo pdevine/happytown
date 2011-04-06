@@ -161,7 +161,6 @@ package
 
             floatingTile = createTile(tileData.floating_tile[0].type,
                                       0, scaling, vpX, vpY);
-            world.addObject(floatingTile);
             fixTilePositions();
 
             var floatingTileX:int = int(tileData.floating_tile[0].@x);
@@ -288,6 +287,8 @@ package
             //trace("don't follow mouse");
             //followMouse = false;
 
+            world.addObject(floatingTile);
+
             if(direction == WEST)
             {
                 floatingTile.x = tiles[position][width-1].x + 
@@ -383,6 +384,9 @@ package
                 floatingTile.nextTileForObjects = tiles[height-1][position];
             }
 
+            // don't update the floating tile with the rest of the tiles
+            world.removeObject(floatingTile);
+
             if(floatingTile.moving)
                 dm.pushedTile = true;
         }
@@ -419,7 +423,9 @@ package
                 }
 
                 floatingTile.update(stage);
+                floatingTile.draw(graphics);
             }
+
         }
 
         private function onAddedToStage(event:Event):void
