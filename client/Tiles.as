@@ -230,9 +230,34 @@ package
                 dm.floatingTilePosition.z);
         }
 
+        private function moveObjectsAndPlayersOnTile(tile:Tile):void
+        {
+            // move any objects on a given tile
+            for(var i:int = 0; i < objects.length; i++)
+            {
+                if(tile == objects[i].tilePosition)
+                {
+                    objects[i].x = tile.x;
+                    objects[i].y = tile.y;
+                }
+            }
+
+            // now move any players
+            for(i = 0; i < players.length; i++)
+            {
+                if(tile == players[i].tilePosition && !players[i].moving)
+                {
+                    players[i].x = tile.x;
+                    players[i].y = tile.y;
+                }
+            }
+
+        }
+
         public function moveTiles(position:uint, direction:uint):void
         {
             var i:int;
+            var tile:Tile;
             stage.dispatchEvent(new MovingTilesEvent("moving"));
 
             trace("move tiles: ", position, direction);
@@ -260,9 +285,12 @@ package
 
                 for(i = 0; i < width; i++)
                 {
-                    trace("moving: ", tiles[position][i].width);
-                    tiles[position][i].moving = true;
-                    tiles[position][i].targetX -= tiles[position][i].width;
+                    tile = tiles[position][i];
+                    trace("moving: ", tile.width);
+
+                    tile.moving = true;
+                    tile.targetX -= tile.width;
+
                     if(i < width-1)
                         tiles[position][i] = tiles[position][i+1];
                 }
@@ -347,7 +375,9 @@ package
             {
                 for(var column:uint = 0; column < tiles[row].length; column++)
                 {
-                    tiles[row][column].update(stage);
+                    var tile:Tile = tiles[row][column];
+                    tile.update(stage);
+                    moveObjectsAndPlayersOnTile(tile);
                 }
             }
             world.draw(graphics);
