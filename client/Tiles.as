@@ -31,8 +31,6 @@ package
         private var fl:Number = 250;
         private var vpX:Number;
         private var vpY:Number;
-        private var rows:uint = 3;
-        private var columns:uint = 3;
 
         private var rowPositions:Array;
         private var columnPositions:Array;
@@ -63,7 +61,7 @@ package
             var tile:Tile;
             var scaling:Number = 0.30;
 
-            for(var i:uint = 0; i < rows * columns; i++)
+            for(var i:uint = 0; i < dm.rows * dm.columns; i++)
             {
                 var tileType:uint = Math.floor(
                                         Math.random() * tileTypes.length)
@@ -73,9 +71,9 @@ package
             }
 
             tiles[0] = new TileL(0, scaling, vpX, vpY);
-            tiles[columns-1] = new TileL(90, scaling, vpX, vpY);
-            tiles[rows * (columns-1)] = new TileL(270, scaling, vpX, vpY);
-            tiles[rows * columns - 1] = new TileL(180, scaling, vpX, vpY);
+            tiles[dm.columns-1] = new TileL(90, scaling, vpX, vpY);
+            tiles[dm.rows * (dm.columns-1)] = new TileL(270, scaling, vpX, vpY);
+            tiles[dm.rows * dm.columns - 1] = new TileL(180, scaling, vpX, vpY);
             
             fixTilePositions();
         }
@@ -86,11 +84,11 @@ package
             columnPositions = new Array();
 
             var tile:Tile;
-            for(var row:uint = 0; row < rows; row++)
+            for(var row:uint = 0; row < dm.rows; row++)
             {
-                for(var column:uint = 0; column < columns; column++)
+                for(var column:uint = 0; column < dm.columns; column++)
                 {
-                    //var tileNum:uint = (row * columns) + column;
+                    //var tileNum:uint = (row * dm.columns) + column;
                     tile = tiles[row][column];
                     var x:Number = tile.width * column - tile.width;
                     var y:Number = tile.height * row - tile.height;
@@ -119,8 +117,8 @@ package
             XML.ignoreWhitespace = true;
             var tileData:XML = new XML(event.target.data);
             var scaling:Number = Number(tileData.@scaling);
-            rows = uint(tileData.@rows);
-            columns = uint(tileData.@columns);
+            dm.rows = uint(tileData.@rows);
+            dm.columns = uint(tileData.@columns);
             trace("scaling: ", tileData.@scaling);
 
             for(var r:uint = 0; r < tileData.row.length(); r++)
@@ -158,6 +156,7 @@ package
             player1.x = tiles[0][0].x;
             player1.y = tiles[0][0].y;
             player1.z = 0;
+            player1.tilePosition = 0;
             players.push(player1);
             world.addObject(player1);
 
@@ -180,52 +179,6 @@ package
                 return(new TileT(rotation, scaling, vpX, vpY));
 
             return null;
-        }
-
-        private function getTileGraph():TraversalGraph
-        {
-            var g:TraversalGraph = new TraversalGraph();
-
-            var row:uint;
-            var column:uint;
-
-            var v1:uint;
-            var v2:uint;
-
-            trace("columns:", columns);
-            trace("rows:", rows);
-
-            for(row = 0; row < tiles.length; row++)
-                for(column = 0; column < tiles[row].length; column++)
-                    g.addVertex(row * columns + column);
-
-            for(row = 0; row < tiles.length; row++)
-            {
-                for(column = 0; column < tiles[row].length; column++)
-                {
-                    if(column < columns-1 &&
-                       tiles[row][column].hasDir(EAST) &&
-                       tiles[row][column+1].hasDir(WEST))
-                    {
-                        v1 = row * columns + column;
-                        v2 = row * columns + column + 1;
-                        g.addEdge(v1, v2);
-                        g.addEdge(v2, v1);
-                    }
-                    if(row < rows-1 &&
-                       tiles[row][column].hasDir(SOUTH) &&
-                       tiles[row+1][column].hasDir(NORTH))
-                    {
-                        v1 = row * columns + column;
-                        v2 = (row+1) * columns + column;
-                        g.addEdge(v1, v2);
-                        g.addEdge(v2, v1);
-                    }
-
-                }
-            }
-
-            return g;
         }
 
         private function onMovingTiles(event:MovingTilesEvent):void
@@ -418,21 +371,27 @@ package
 
             if(! dm.pushedTile)
             {
-                if(wx < 0 && column == -1 && row > 0 && row < rows) 
+                if(wx < 0 && column == -1 && row > 0 && row < dm.rows) 
                     moveTiles(row, EAST);
-                else if(wx > 0 && column == -1 && row > 0 && row < rows) 
+                else if(wx > 0 && column == -1 && row > 0 && row < dm.rows) 
                     moveTiles(row, WEST);
-                else if(wy < 0 && row == -1 && column > 0 && column < columns) 
+                else if(wy < 0 && row == -1 && column > 0 &&
+                        column < dm.columns) 
                     moveTiles(column, SOUTH);
-                else if(wy > 0 && row == -1 && column > 0 && column < columns) 
+                else if(wy > 0 && row == -1 && column > 0 &&
+                        column < dm.columns) 
                     moveTiles(column, NORTH);
             }
             else if(column > -1 && row > -1)
             {
-                var g:TraversalGraph = getTileGraph();
+                var g:TraversalGraph = new TraversalGraph();
+                g.createTileGraph(tiles);
+
+                trace("player tilePosition =", players[0].tilePosition);
+
                 var shortestPath:Array = g.findShortestPath(
-                    0,
-                    row * columns + column,
+                    players[0].tilePosition,
+                    row * dm.columns + column,
                     []);
 
                 var tilePath:Array = new Array();
@@ -443,10 +402,14 @@ package
                     for(var x:int = 0; x < shortestPath.length; x++)
                     {
                         var pos:int = shortestPath[x];
-                        tilePath.push(tiles[int(pos / rows)][pos % rows]);
+                        tilePath.push(tiles[int(pos / dm.rows)][pos % dm.rows]);
                     }
                     trace(tilePath);
                     players[0].move(tilePath);
+                    players[0].tilePosition = 
+                        shortestPath[shortestPath.length-1];
+                    trace("new tilePosition =", players[0].tilePosition);
+
                 }
             }
 

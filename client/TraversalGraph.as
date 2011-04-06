@@ -5,14 +5,55 @@ package
     public class TraversalGraph
     {
         private var graph:Dictionary;
+        private var dm:DataManager;
 
         public function TraversalGraph()
         {
             graph = new Dictionary();
+            dm = DataManager.getInstance();
+        }
 
-            //trace(graph);
-            //var p:Array = findPath(graph, 'n1', 'n7', []);
-            //trace("shortest path:", p);
+        public function createTileGraph(tiles:Array):void
+        {
+            var row:uint;
+            var column:uint;
+
+            var v1:uint;
+            var v2:uint;
+
+            trace("columns:", dm.columns);
+            trace("rows:", dm.rows);
+
+            for(row = 0; row < tiles.length; row++)
+                for(column = 0; column < tiles[row].length; column++)
+                    addVertex(row * dm.columns + column);
+
+            for(row = 0; row < tiles.length; row++)
+            {
+                for(column = 0; column < tiles[row].length; column++)
+                {
+                    if(column < dm.columns-1 &&
+                       tiles[row][column].hasDir(Tiles.EAST) &&
+                       tiles[row][column+1].hasDir(Tiles.WEST))
+                    {
+                        v1 = row * dm.columns + column;
+                        v2 = row * dm.columns + column + 1;
+                        addEdge(v1, v2);
+                        addEdge(v2, v1);
+                    }
+                    if(row < dm.rows-1 &&
+                       tiles[row][column].hasDir(Tiles.SOUTH) &&
+                       tiles[row+1][column].hasDir(Tiles.NORTH))
+                    {
+                        v1 = row * dm.columns + column;
+                        v2 = (row+1) * dm.columns + column;
+                        addEdge(v1, v2);
+                        addEdge(v2, v1);
+                    }
+
+                }
+            }
+
         }
 
         public function addVertex(v:Object):void

@@ -3,6 +3,7 @@ package
     public class Actor extends WorldObject
     {
 
+        public var tilePosition:uint = 0;
         public var tilePath:Array;
         private var currentSegment:int = -1;
 

@@ -8,6 +8,8 @@ package
         public var currentLevel:uint = 1;
         public var pushedTile:Boolean = false;
         public var floatingTilePosition:Point3D;
+        public var columns:uint = 0;
+        public var rows:uint = 0;
 
         public static function getInstance():DataManager
         {
