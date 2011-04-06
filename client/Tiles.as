@@ -166,10 +166,9 @@ package
 
             var floatingTileX:int = int(tileData.floating_tile[0].@x);
             var floatingTileY:int = int(tileData.floating_tile[0].@y);
-            var floatingTileZ:int = int(tileData.floating_tile[0].@z);
 
             dm.floatingTilePosition = new Point3D(
-                floatingTileX, floatingTileY, floatingTileZ);
+                floatingTileX, floatingTileY, 0);
 
             var player1:Bus = new Bus(vpX, vpY);
             player1.scale(scaling);
@@ -212,8 +211,7 @@ package
             {
                 trace("move finished!");
                 if(floatingTile.x != dm.floatingTilePosition.x ||
-                   floatingTile.y != dm.floatingTilePosition.y ||
-                   floatingTile.z != dm.floatingTilePosition.z)
+                   floatingTile.y != dm.floatingTilePosition.y)
                     returnFloatingTile();
             }
         }
@@ -225,7 +223,7 @@ package
             floatingTile.moveTo(
                 dm.floatingTilePosition.x,
                 dm.floatingTilePosition.y,
-                dm.floatingTilePosition.z);
+                0);
 
             // XXX - move objects and players instead of teleporting them
 
@@ -266,6 +264,14 @@ package
 
         }
 
+        public function endTurn():void
+        {
+            dm.currentPlayer++;
+            if(dm.currentPlayer >= players.length)
+                dm.currentPlayer = 0;
+            dm.pushedTile = false;
+        }
+
         public function moveTiles(position:uint, direction:uint):void
         {
             var i:int;
@@ -278,8 +284,6 @@ package
             var newFloatingTile:Tile;
             var width:uint = tiles[position].length;
             var height:uint = tiles.length;
-
-            floatingTile.z = 0;
 
             //trace("don't follow mouse");
             //followMouse = false;
@@ -412,7 +416,6 @@ package
                 {
                     floatingTile.x = getWorldX(mouseX);
                     floatingTile.y = getWorldY(mouseY);
-                    floatingTile.z = dm.floatingTilePosition.z;
                 }
 
                 floatingTile.update(stage);
@@ -447,15 +450,15 @@ package
 
             if(! dm.pushedTile)
             {
-                if(wx < 0 && column == -1 && row > 0 && row < dm.rows) 
+                if(wx < 0 && column == -1 && row > 0 && row < dm.rows-1) 
                     moveTiles(row, EAST);
-                else if(wx > 0 && column == -1 && row > 0 && row < dm.rows) 
+                else if(wx > 0 && column == -1 && row > 0 && row < dm.rows-1) 
                     moveTiles(row, WEST);
                 else if(wy < 0 && row == -1 && column > 0 &&
-                        column < dm.columns) 
+                        column < dm.columns-1)
                     moveTiles(column, SOUTH);
                 else if(wy > 0 && row == -1 && column > 0 &&
-                        column < dm.columns) 
+                        column < dm.columns-1) 
                     moveTiles(column, NORTH);
             }
             else if(column > -1 && row > -1)
@@ -626,6 +629,9 @@ package
                     break;
                 case Keyboard.UP:
                     moveTiles(1, NORTH);
+                    break;
+                case Keyboard.SPACE:
+                    endTurn();
                     break;
                 case 88:
                     // x
