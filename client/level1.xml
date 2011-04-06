@@ -36,7 +36,7 @@
     </tile>
     <tile>
         <type>tile_t</type>
-        <rotation>0</rotation>
+        <rotation>90</rotation>
     </tile>
     <tile>
         <type>tile_l</type>

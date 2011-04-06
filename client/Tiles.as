@@ -233,9 +233,10 @@ package
             if(event.command == "finished")
             {
                 trace("move finished!");
-                //followMouse = true;
-                //floatingTile.moving = true;
-                returnFloatingTile();
+                if(floatingTile.x != dm.floatingTilePosition.x ||
+                   floatingTile.y != dm.floatingTilePosition.y ||
+                   floatingTile.z != dm.floatingTilePosition.z)
+                    returnFloatingTile();
             }
         }
 
@@ -445,6 +446,7 @@ package
                         tilePath.push(tiles[int(pos / rows)][pos % rows]);
                     }
                     trace(tilePath);
+                    players[0].move(tilePath);
                 }
             }
 

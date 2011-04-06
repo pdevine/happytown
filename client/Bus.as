@@ -1,8 +1,6 @@
 package
 {
-    import flash.display.Graphics;
-
-    public class Bus extends WorldObject
+    public class Bus extends Actor
     {
 
         private const objectPoints:Array = [
@@ -74,6 +72,10 @@ package
 
         public function update():void
         {
+
+            updateMove();
+
+/*
             var i:int;
             var angleX:Number = 0.01;
             var angleY:Number = 0.01;
@@ -96,6 +98,9 @@ package
                 point.z += _z;
 
             }
+
+*/
+
         }
 
     }
