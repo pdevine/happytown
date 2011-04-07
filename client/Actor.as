@@ -5,6 +5,7 @@ package
 
         public var tilePath:Array;
         private var currentSegment:int = -1;
+        private var dm:DataManager;
 
         protected const moveSpeed:Number = 10;
         protected const rotationSpeed:Number = 0.1;
@@ -14,6 +15,7 @@ package
         public function Actor(vpX:Number, vpY:Number, name:String)
         {
             super(vpX, vpY, name);
+            dm = DataManager.getInstance();
         }
 
         public function move(tilePath:Array):void
@@ -103,12 +105,31 @@ package
                             turning = true;
                             targetRotation = direction;
                         }
-
                     }
                 }
+                toggleAlphaOnTile();
 
             }
 
+        }
+
+        // XXX - this could be a little better if it used distance
+        private function toggleAlphaOnTile():void
+        {
+            var goClear:Boolean = false;
+            for(var n:uint = 0; n < dm.objects.length; n++)
+            {
+                var myObj:WorldObject = dm.objects[n];
+                for(var i:uint = 0; i < myObj.triangles.length; i++)
+                {
+                    myObj.triangles[i].alphaToggle = 
+                        myObj.tilePosition == tilePosition;
+                    goClear = myObj.tilePosition == tilePosition || goClear;
+                }
+
+            }
+            for(n = 0; n < triangles.length; n++)
+                triangles[n].alphaToggle = goClear;
         }
 
     }

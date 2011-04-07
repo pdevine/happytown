@@ -13,6 +13,7 @@ package
         public var floatingTilePosition:Point3D;
         public var columns:uint = 0;
         public var rows:uint = 0;
+        public var objects:Array;
 
         public static function getInstance():DataManager
         {

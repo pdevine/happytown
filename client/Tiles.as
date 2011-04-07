@@ -48,10 +48,11 @@ package
         {
             tiles = new Array();
             players = new Array();
-            objects = new Array();
             movingTiles = new Array();
             dm = DataManager.getInstance();
             world = new World();
+
+            dm.objects = new Array();
 
             trace("added stage event listener");
             this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
@@ -162,7 +163,7 @@ package
                         worldObject.y = tile.y;
                         worldObject.tilePosition = tile;
                         world.addObject(worldObject);
-                        objects.push(worldObject);
+                        dm.objects.push(worldObject);
                     }
 
                     if(home)
@@ -220,11 +221,11 @@ package
 
         private function getObjectByName(objectName:String):WorldObject
         {
-            for(var n:uint = 0; n < objects.length; n++)
+            for(var n:uint = 0; n < dm.objects.length; n++)
             {
-                if(objects[n].name == objectName) {
+                if(dm.objects[n].name == objectName) {
                     trace("object is", objectName);
-                    return objects[n];
+                    return dm.objects[n];
                 }
             }
             return null;
@@ -278,10 +279,11 @@ package
 
             // XXX - move objects and players instead of teleporting them
 
-            for(var i:int = 0; i < objects.length; i++)
+            for(var i:int = 0; i < dm.objects.length; i++)
             {
-                if(objects[i].tilePosition == floatingTile)
-                    objects[i].tilePosition = floatingTile.nextTileForObjects;
+                if(dm.objects[i].tilePosition == floatingTile)
+                    dm.objects[i].tilePosition =
+                        floatingTile.nextTileForObjects;
             }
 
             for(i = 0; i < players.length; i++)
@@ -294,12 +296,12 @@ package
         private function moveObjectsAndPlayersOnTile(tile:Tile):void
         {
             // move any objects on a given tile
-            for(var i:int = 0; i < objects.length; i++)
+            for(var i:int = 0; i < dm.objects.length; i++)
             {
-                if(tile == objects[i].tilePosition)
+                if(tile == dm.objects[i].tilePosition)
                 {
-                    objects[i].x = tile.x;
-                    objects[i].y = tile.y;
+                    dm.objects[i].x = tile.x;
+                    dm.objects[i].y = tile.y;
                 }
             }
 
@@ -337,10 +339,10 @@ package
             // look for any objects to pick up
             for(var i:uint = 0; i < player.requiredObjects.length; i++)
             {
-                for(var n:uint = 0; n < objects.length; n++)
+                for(var n:uint = 0; n < dm.objects.length; n++)
                 {
-                    if(objects[n].tilePosition == player.tilePosition &&
-                       objects[n] == player.requiredObjects[i])
+                    if(dm.objects[n].tilePosition == player.tilePosition &&
+                       dm.objects[n] == player.requiredObjects[i])
                     {
                         trace("found an object!");
                         delete player.requiredObjects[i];
@@ -495,8 +497,8 @@ package
             for(var i:int = 0; i < players.length; i++)
                 players[i].update();
 
-            for(i = 0; i < objects.length; i++)
-                objects[i].update();
+            for(i = 0; i < dm.objects.length; i++)
+                dm.objects[i].update();
 
             if(floatingTile != null)
             {

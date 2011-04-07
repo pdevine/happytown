@@ -10,6 +10,7 @@ package
 
         private var color:uint;
         public var light:Light;
+        public var alphaToggle:Boolean;
 
         public function Triangle(a:Point3D,
                                  b:Point3D,
@@ -27,7 +28,11 @@ package
             if(isBackFace())
                 return;
 
-            g.beginFill(getAdjustedColor());
+            var alphaAmount:Number = 1.0;
+            if(alphaToggle)
+                alphaAmount = 0.5;
+
+            g.beginFill(getAdjustedColor(), alphaAmount);
             g.moveTo(pointA.screenX, pointA.screenY);
             g.lineTo(pointB.screenX, pointB.screenY);
             g.lineTo(pointC.screenX, pointC.screenY);
@@ -48,6 +53,7 @@ package
             blue *= lightFactor;
 
             return red << 16 | green << 8 | blue;
+
         }
 
         private function getLightFactor():Number
