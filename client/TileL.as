@@ -72,6 +72,17 @@ package
             18, 16, 20, 0xfcb653,
             18, 20, 22, 0xfcb653,
 
+            // dirt
+
+            0, 30, 1, 0xfcb653,
+            30, 31, 1, 0xfcb653,
+            0, 3, 32, 0xfcb653,
+            0, 32, 30, 0xfcb653,
+            1, 33, 2, 0xfcb653,
+            1, 31, 33, 0xfcb653,
+            3, 2, 32, 0xfcb653,
+            32, 2, 33, 0xfcb653,
+
         ];
 
         public function TileL(rotation:Number,
