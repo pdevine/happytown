@@ -11,9 +11,9 @@ package
 
         protected var turning:Boolean = false;
 
-        public function Actor(vpX:Number, vpY:Number)
+        public function Actor(vpX:Number, vpY:Number, name:String)
         {
-            super(vpX, vpY);
+            super(vpX, vpY, name);
         }
 
         public function move(tilePath:Array):void

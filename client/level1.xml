@@ -48,5 +48,10 @@
   <floating_tile x="-350" y="-250" z="0">
       <type>tile_i</type>
   </floating_tile>
+  <player>
+    <requiredObjects>
+        <object>a</object>
+    </requiredObjects>
+  </player>
 </level>
 

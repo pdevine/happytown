@@ -4,6 +4,8 @@ package
 
     public class WorldObject
     {
+        public var name:String;
+
         protected var points:Array;
         public var triangles:Array;
 
@@ -26,10 +28,15 @@ package
 
         public var tilePosition:Tile;
 
-        public function WorldObject(vpX:Number, vpY:Number)
+        public function WorldObject(
+            vpX:Number,
+            vpY:Number,
+            name:String = "World Object")
         {
             this.vpX = vpX;
             this.vpY = vpY;
+
+            this.name = name;
 
             points = new Array();
             triangles = new Array();

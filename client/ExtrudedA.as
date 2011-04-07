@@ -78,9 +78,9 @@ package
             8, 19, 21, 0xcccccc
         ];
 
-        public function ExtrudedA(vpX:Number, vpY:Number)
+        public function ExtrudedA(vpX:Number, vpY:Number, name:String)
         {
-            super(vpX, vpY);
+            super(vpX, vpY, name);
 
             setData(objectPoints, objectTriangles);
         }

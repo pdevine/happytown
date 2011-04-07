@@ -4,10 +4,11 @@ package
     {
 
         public var requiredObjects:Array;
+        public var sidebar:Sidebar;
 
-        public function Person(vpX:Number, vpY:Number)
+        public function Person(vpX:Number, vpY:Number, name:String)
         {
-            super(vpX, vpY);
+            super(vpX, vpY, name);
 
             requiredObjects = new Array();
         }

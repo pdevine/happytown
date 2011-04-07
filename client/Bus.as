@@ -64,9 +64,9 @@ package
 
         ];
 
-        public function Bus(vpX:Number, vpY:Number)
+        public function Bus(vpX:Number, vpY:Number, name:String)
         {
-            super(vpX, vpY);
+            super(vpX, vpY, name);
             setData(objectPoints, objectTriangles);
         }
 

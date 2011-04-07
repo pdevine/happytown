@@ -5,6 +5,8 @@ package
         private static var instance:DataManager;
         private static var allowInstantiation:Boolean;
 
+        public var gameOver:Boolean = false;
+
         public var currentLevel:uint = 1;
         public var currentPlayer:int = 0;
         public var pushedTile:Boolean = false;

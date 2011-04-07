@@ -112,6 +112,8 @@ package
 
         private function levelLoaded(event:Event):void
         {
+            // XXX - clean up this method
+
             trace("xml loaded");
             var tile:Tile;
             var row:Array;
@@ -126,6 +128,8 @@ package
             dm.rows = uint(tileData.@rows);
             dm.columns = uint(tileData.@columns);
 
+            var playerHomes:Dictionary = new Dictionary();
+
             for(var r:uint = 0; r < tileData.row.length(); r++)
             {
                 trace("row", r);
@@ -139,7 +143,14 @@ package
                     var tileType:String = tileData.row[r].tile[i].type;
                     var rotation:Number = 
                         Number(tileData.row[r].tile[i].rotation);
+
+                    // starting location for a player -- should be in the form
+                    // playerX
+                    var home:String = tileData.row[r].tile[i].home;
+
+                    // XXX - support multiple objects?
                     var objectType:String = tileData.row[r].tile[i].object;
+
                     tile = createTile(tileType, rotation, scaling, vpX, vpY);
 
                     // add any objects if we've found them
@@ -153,6 +164,10 @@ package
                         world.addObject(worldObject);
                         objects.push(worldObject);
                     }
+
+                    if(home)
+                        playerHomes[home] = tile;
+
                     world.addObject(tile);
                     row.push(tile);
                 }
@@ -169,13 +184,33 @@ package
             dm.floatingTilePosition = new Point3D(
                 floatingTileX, floatingTileY, 0);
 
-            var player1:Bus = new Bus(vpX, vpY);
-            player1.scale(scaling);
-            player1.z = 0;
-            player1.tilePosition = tiles[0][1];
-            player1.requiredObjects.push(objects[0]);
-            players.push(player1);
-            world.addObject(player1);
+            for(i = 0; i < tileData.player.length(); i++)
+            {
+                var playerName:String = "player" + String(i + 1);
+                trace("Hello", playerName);
+
+                var requiredObjects:XMLList = 
+                    tileData.player[i].requiredObjects;
+
+                var player:Bus = new Bus(vpX, vpY, playerName);
+                player.scale(scaling);
+                player.tilePosition = playerHomes[playerName];
+                player.sidebar = new Sidebar(playerName, 300, 20);
+                addChild(player.sidebar);
+
+                trace("req objects xml", requiredObjects);
+
+                // find any objects the player needs to collect
+                for(var n:uint = 0; n < requiredObjects.object.length(); n++)
+                {
+                    trace("found object");
+                    player.requiredObjects.push(
+                        getObjectByName(requiredObjects.object[n]));
+                }
+
+                players.push(player);
+                world.addObject(player);
+            }
 
             stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUp);
             stage.addEventListener(MovingTilesEvent.CONTROL_TYPE,
@@ -183,10 +218,22 @@ package
             xmlLoader.removeEventListener(Event.COMPLETE, levelLoaded);
         }
 
+        private function getObjectByName(objectName:String):WorldObject
+        {
+            for(var n:uint = 0; n < objects.length; n++)
+            {
+                if(objects[n].name == objectName) {
+                    trace("object is", objectName);
+                    return objects[n];
+                }
+            }
+            return null;
+        }
+
         private function createObject(objectType:String):WorldObject
         {
             if(objectType == "a")
-                return(new ExtrudedA(vpX, vpY));
+                return(new ExtrudedA(vpX, vpY, objectType));
             return null;
         }
 
@@ -276,6 +323,7 @@ package
             if(!player.requiredObjects.length)
             {
                 trace("Player wins!");
+                dm.gameOver = true;
             }
 
             dm.currentPlayer++;
@@ -454,7 +502,7 @@ package
             {
                 moveObjectsAndPlayersOnTile(floatingTile);
 
-                if(! dm.pushedTile && !paused)
+                if(!dm.pushedTile && !paused && !dm.gameOver)
                 {
                     floatingTile.x = getWorldX(mouseX);
                     floatingTile.y = getWorldY(mouseY);
