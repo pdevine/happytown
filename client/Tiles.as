@@ -472,10 +472,6 @@ package
                 var g:TraversalGraph = new TraversalGraph();
                 g.createTileGraph(tiles);
 
-                trace("player tilePosition =", 
-                    findTileIndexInTiles(
-                        players[dm.currentPlayer].tilePosition));
-
                 // tileIndex should always be good here
                 var shortestPath:Array = g.findShortestPath(
                     findTileIndexInTiles(
@@ -495,12 +491,6 @@ package
                     }
                     trace(tilePath);
                     players[dm.currentPlayer].move(tilePath);
-                    players[dm.currentPlayer].tilePosition = 
-                        tilePath[tilePath.length-1];
-                    trace("new tilePosition =",
-                        findTileIndexInTiles(
-                            players[dm.currentPlayer].tilePosition));
-
                 }
             }
 

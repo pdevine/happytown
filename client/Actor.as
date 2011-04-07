@@ -83,6 +83,8 @@ package
                         targetY = tile.y;
                         targetZ = tile.z;
 
+                        tilePosition = tile;
+
                         var direction:int = Math.round(
                             Math.atan2(targetY - y, targetX - x) * 180.0 
                                 / Math.PI);
