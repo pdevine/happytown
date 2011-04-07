@@ -1,6 +1,6 @@
 package
 {
-    public class Bus extends Actor
+    public class Bus extends Person
     {
 
         private const objectPoints:Array = [
@@ -74,32 +74,6 @@ package
         {
 
             updateMove();
-
-/*
-            var i:int;
-            var angleX:Number = 0.01;
-            var angleY:Number = 0.01;
-            //var angleX:Number = 0.0;
-            //var angleY:Number = 0.0;
-
-
-            for(i = 0; i < points.length; i++)
-            {
-                var point:Point3D = points[i];
-                point.x -= _x;
-                point.y -= _y;
-                point.z -= _z;
-
-                point.rotateX(angleX);
-                point.rotateY(angleY);
-
-                point.x += _x;
-                point.y += _y;
-                point.z += _z;
-
-            }
-
-*/
 
         }
 

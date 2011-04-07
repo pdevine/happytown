@@ -5,6 +5,7 @@
     <tile>
         <type>tile_l</type>
         <rotation>0</rotation>
+        <home>player1</home>
     </tile>
     <tile>
         <type>tile_t</type>
@@ -44,7 +45,7 @@
         <rotation>180</rotation>
     </tile>
   </row>
-  <floating_tile x="-350" y="-250" z="-20">
+  <floating_tile x="-350" y="-250" z="0">
       <type>tile_i</type>
   </floating_tile>
 </level>

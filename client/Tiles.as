@@ -173,6 +173,7 @@ package
             player1.scale(scaling);
             player1.z = 0;
             player1.tilePosition = tiles[0][1];
+            player1.requiredObjects.push(objects[0]);
             players.push(player1);
             world.addObject(player1);
 
@@ -210,8 +211,12 @@ package
             {
                 trace("move finished!");
                 if(floatingTile.x != dm.floatingTilePosition.x ||
-                   floatingTile.y != dm.floatingTilePosition.y)
+                   floatingTile.y != dm.floatingTilePosition.y) {
+                    // make the floating tile draw separately
+                    floatingTile.drawSeparately = true;
+                    world.removeObject(floatingTile);
                     returnFloatingTile();
+                }
             }
         }
 
@@ -265,10 +270,45 @@ package
 
         public function endTurn():void
         {
+            var player:Person = players[dm.currentPlayer];
+
+            lookForObjects(player);
+            if(!player.requiredObjects.length)
+            {
+                trace("Player wins!");
+            }
+
             dm.currentPlayer++;
             if(dm.currentPlayer >= players.length)
                 dm.currentPlayer = 0;
             dm.pushedTile = false;
+        }
+
+        private function lookForObjects(player:Person):void
+        {
+            // look for any objects to pick up
+            for(var i:uint = 0; i < player.requiredObjects.length; i++)
+            {
+                for(var n:uint = 0; n < objects.length; n++)
+                {
+                    if(objects[n].tilePosition == player.tilePosition &&
+                       objects[n] == player.requiredObjects[i])
+                    {
+                        trace("found an object!");
+                        delete player.requiredObjects[i];
+                    }
+                }
+            }
+
+            // cleanup the array since delete leaves a null in the array
+            var newRequiredObjects:Array = new Array();
+            for(i = 0; i < player.requiredObjects.length; i++)
+            {
+                if(player.requiredObjects[i])
+                    newRequiredObjects.push(player.requiredObjects[i]);
+            }
+
+            player.requiredObjects = newRequiredObjects;
         }
 
         public function moveTiles(position:uint, direction:uint):void
@@ -287,6 +327,7 @@ package
             //trace("don't follow mouse");
             //followMouse = false;
 
+            floatingTile.drawSeparately = false;
             world.addObject(floatingTile);
 
             if(direction == WEST)
@@ -384,9 +425,6 @@ package
                 floatingTile.nextTileForObjects = tiles[height-1][position];
             }
 
-            // don't update the floating tile with the rest of the tiles
-            world.removeObject(floatingTile);
-
             if(floatingTile.moving)
                 dm.pushedTile = true;
         }
@@ -423,7 +461,8 @@ package
                 }
 
                 floatingTile.update(stage);
-                floatingTile.draw(graphics);
+                if(floatingTile.drawSeparately)
+                    floatingTile.draw(graphics);
             }
 
         }

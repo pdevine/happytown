@@ -61,6 +61,9 @@ package
         private const moveSpeed:Number = 0.1;
         private const rotationSpeed:Number = 0.1;
 
+        // determine whether the tile should be drawn separately
+        public var drawSeparately:Boolean = true;
+
         // where to send any objects on the tile if they get separated
         public var nextTileForObjects:Tile;
 
