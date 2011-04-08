@@ -21,8 +21,15 @@ package
         private var menu:Array;
         private var angle:Number = 0;
 
+        private var sun:Sun;
+
+        private const colors:Array = [0xfcb653, 0xff5254, 0xcee879];
+
         public function Title()
         {
+
+            sun = new Sun();
+            addChild(sun);
 
             var format:TextFormat = new TextFormat();
             format.font = "LoKinderSchrift";
@@ -34,6 +41,8 @@ package
 
             for(var i:uint = 0; i < title.length; i++)
             {
+                format.color = 
+                    colors[int(Math.floor(Math.random() * colors.length))];
                 letter = new TextField();
                 letter.embedFonts = true;
                 letter.autoSize = TextFieldAutoSize.LEFT;
