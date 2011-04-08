@@ -21,6 +21,9 @@ package
         private var menu:Array;
         private var angle:Number = 0;
 
+        private var bgShape:Sprite;
+        private var sunRays:SunRays;
+
         private var sun:Sun;
         private var sasquatch:Sasquatch;
 
@@ -28,6 +31,9 @@ package
 
         public function Title()
         {
+
+            sunRays = new SunRays();
+            addChild(sunRays);
 
             sun = new Sun();
             addChild(sun);
@@ -74,15 +80,29 @@ package
             {
                 letters[i].y = Math.sin(angle + 0.5 * i) * 20 + yOffset;
             }
+
+            sunRays.rotation = angle * 7;
         }
 
         private function onAddedToStage(event:Event):void
         {
+            bgShape = new Sprite();
+
+            bgShape.graphics.beginFill(0x5cacc4);
+            bgShape.graphics.drawRect(
+                -100, 0,
+                stage.stageWidth + 100,
+                stage.stageHeight);
+            bgShape.graphics.endFill();
+            addChildAt(bgShape, 0);
+
             stage.addEventListener(MenuItemEvent.CONTROL_TYPE, onMenuItemEvent);
         }
 
         private function onEnterFrame(event:Event):void
         {
+            sunRays.x = sun.x;
+            sunRays.y = sun.y;
             draw();
         }
 
