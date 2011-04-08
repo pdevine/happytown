@@ -22,6 +22,7 @@ package
         private var angle:Number = 0;
 
         private var sun:Sun;
+        private var sasquatch:Sasquatch;
 
         private const colors:Array = [0xfcb653, 0xff5254, 0xcee879];
 
@@ -30,6 +31,9 @@ package
 
             sun = new Sun();
             addChild(sun);
+
+            sasquatch = new Sasquatch();
+            addChild(sasquatch);
 
             var format:TextFormat = new TextFormat();
             format.font = "LoKinderSchrift";
