@@ -10,7 +10,7 @@ package
 
         private var color:uint;
         public var light:Light;
-        public var alphaToggle:Boolean;
+        public var alphaAmount:Number = 1.0;
 
         public function Triangle(a:Point3D,
                                  b:Point3D,
@@ -28,9 +28,7 @@ package
             if(isBackFace())
                 return;
 
-            var alphaAmount:Number = 1.0;
-            if(alphaToggle)
-                alphaAmount = 0.5;
+            alphaAmount = Math.max(alphaAmount, 0.5);
 
             g.beginFill(getAdjustedColor(), alphaAmount);
             g.moveTo(pointA.screenX, pointA.screenY);

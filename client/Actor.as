@@ -111,30 +111,7 @@ package
                         }
                     }
                 }
-                toggleAlphaOnTile();
-
             }
-
         }
-
-        // XXX - this could be a little better if it used distance
-        private function toggleAlphaOnTile():void
-        {
-            var goClear:Boolean = false;
-            for(var n:uint = 0; n < dm.objects.length; n++)
-            {
-                var myObj:WorldObject = dm.objects[n];
-                for(var i:uint = 0; i < myObj.triangles.length; i++)
-                {
-                    myObj.triangles[i].alphaToggle = 
-                        myObj.tilePosition == tilePosition;
-                    goClear = myObj.tilePosition == tilePosition || goClear;
-                }
-
-            }
-            for(n = 0; n < triangles.length; n++)
-                triangles[n].alphaToggle = goClear;
-        }
-
     }
 }

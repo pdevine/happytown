@@ -85,6 +85,12 @@ package
             }
         }
 
+        public function setAlpha(alphaAmount:Number=1.0):void
+        {
+            for(var n:uint = 0; n < triangles.length; n++)
+                triangles[n].alphaAmount = alphaAmount;
+        }
+
         public function scale(scaleFactor:Number):void
         {
             trace("Scale = ", scaleFactor);

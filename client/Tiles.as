@@ -238,6 +238,27 @@ package
             return null;
         }
 
+        private function setPlayerObjectAlphaValue():void
+        {
+            for(var n:uint = 0; n < dm.objects.length; n++)
+            {
+                var object:WorldObject = dm.objects[n];
+                for(var i:uint = 0; i < players.length; i++)
+                {
+                    var player:Person = players[i];
+                    var dx:Number = player.x - object.x;
+                    var dy:Number = player.y - object.y;
+                    var dist:Number = Math.sqrt(dx*dx + dy*dy);
+                    trace("object distance =", dist);
+                    if(dist <= 100)
+                    {
+                        player.setAlpha(dist / 100.0);
+                        object.setAlpha(dist / 100.0);
+                    }
+                }
+            }
+        }
+
         private function createTile(tileType:String,
                                     rotation:Number,
                                     scaling:Number,
@@ -493,6 +514,7 @@ package
                 }
             }
             world.draw(graphics);
+            setPlayerObjectAlphaValue();
 
             for(var i:int = 0; i < players.length; i++)
                 players[i].update();
