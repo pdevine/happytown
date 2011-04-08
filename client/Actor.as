@@ -96,10 +96,14 @@ package
 
                         if(rotation != direction)
                         {
-                            if(rotation == 90 && direction == -180)
-                                rotation = -270;
-                            else if(rotation == -90 && direction == 180)
-                                rotation = 270;
+                            // fix the rotation so that the bus doesn't
+                            // circle around the wrong way
+                            if(rotation < direction &&
+                               direction - rotation >= 270)
+                                direction -= 360;
+                            else if(rotation > direction &&
+                               rotation - direction >= 270)
+                                direction += 360;
 
                             trace("Turning to", direction);
                             turning = true;
