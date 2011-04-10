@@ -14,11 +14,13 @@ SOURCES = \
 	Title.as \
 	Triangle.as \
 
+INCLUDE = -compiler.source-path=../../as3svgrendererlib
+
 BIN_DIR = /Developer/SDKs/flex_sdk_4.1/bin
 FLAGS = -static-link-runtime-shared-libraries=true -debug=true -use-network=false
 
 happytown: $(SOURCES)
-	$(BIN_DIR)/mxmlc $(FLAGS) HappyTown.as
+	$(BIN_DIR)/mxmlc $(FLAGS) $(INCLUDE) HappyTown.as
 
 %.swf: %.as
 	$(BIN_DIR)/mxmlc $(FLAGS) $<
