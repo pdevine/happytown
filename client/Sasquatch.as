@@ -16,6 +16,8 @@ package
         private var angle:Number = 0;
         private var rotationSpeed:Number = 0.1;
         private var container:Sprite;
+        private var arm1:TwoSegmentReach;
+        private var arm2:TwoSegmentReach;
 
         public function Sasquatch()
         {
@@ -28,6 +30,8 @@ package
             loader.addEventListener(IOErrorEvent.IO_ERROR, onIOError);
             loader.load(new URLRequest(filename));
             
+            arm1 = new TwoSegmentReach();
+            arm2 = new TwoSegmentReach();
 
             addEventListener(Event.ENTER_FRAME, onEnterFrame);
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
@@ -40,15 +44,23 @@ package
             var svg:XML = new XML(event.target.data);
             XML.ignoreWhitespace = true;
 
-            var sunImg:SVGDocument = new SVGDocument();
-            sunImg.baseURL = "Images/";
-            sunImg.parse(svg);
+            var svgImg:SVGDocument = new SVGDocument();
+            svgImg.baseURL = "Images/";
+            svgImg.parse(svg);
 
-            container.addChild(sunImg);
+            container.addChild(svgImg);
             container.scaleX = .5;
             container.scaleY = .5;
             container.x = -container.width / 2;
             container.y = -container.height / 2;
+
+            arm1.x = -65;
+            arm1.y = -60;
+            container.addChild(arm1);
+
+            arm2.x = -240;
+            arm2.y = -60;
+            container.addChild(arm2);
         }
 
         private function onAddedToStage(event:Event):void
